@@ -11,6 +11,7 @@ type JabatanStrukturalRepository interface {
 	FindById(arg ReadJabatanStrukturalParams) (*models.JabatanStruktural, error)
 	Delete(arg DeleteJabatanStrukturalParams) (err error)
 	IsExist(arg IsExistJabatanStrukturalParams) (bool, error)
+	Create(arg CreateJabatanStrukturalParams) (*models.JabatanStruktural, error)
 }
 
 type repo struct{}
@@ -95,4 +96,29 @@ func (*repo) IsExist(arg IsExistJabatanStrukturalParams) (bool, error) {
 	}
 
 	return true, nil
+}
+
+// CreateJabatanStrukturalParams .
+type CreateJabatanStrukturalParams struct {
+	Name     string `json:"name"`
+	Fullname string `json:"fullname"`
+}
+
+func (*repo) Create(arg CreateJabatanStrukturalParams) (*models.JabatanStruktural, error) {
+	var jabatanStruktural models.JabatanStruktural
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.CreateJabatanStruktural, arg.Name, arg.Fullname).StructScan(&jabatanStruktural)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &jabatanStruktural, nil
 }

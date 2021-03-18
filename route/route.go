@@ -26,6 +26,7 @@ func InitRoute() *echo.Echo {
 	api.GET("/jabatan_struktural", action.ListJabatanStrukturalHandler)
 	api.GET("/jabatan_struktural/:id", action.ReadJabatanStrukturalHandler)
 	api.DELETE("/jabatan_struktural/:id", action.DeleteJabatanStrukturalHandler)
+	api.POST("/jabatan_struktural", action.CreateJabatanStrukturalHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
