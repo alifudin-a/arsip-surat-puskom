@@ -24,6 +24,7 @@ func InitRoute() *echo.Echo {
 
 	api := e.Group("/api")
 	api.GET("/jabatan_struktural", action.ListJabatanStrukturalHandler)
+	api.GET("/jabatan_struktural/:id", action.ReadJabatanStrukturalHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 

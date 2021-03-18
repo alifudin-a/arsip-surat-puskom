@@ -8,6 +8,7 @@ import (
 
 type JabatanStrukturalRepository interface {
 	FindAll() ([]models.JabatanStruktural, error)
+	FindById(arg ReadJabatanStrukturalParams) (*models.JabatanStruktural, error)
 }
 
 type repo struct{}
@@ -17,7 +18,7 @@ func NewJabatanStrukturalRepository() JabatanStrukturalRepository {
 }
 
 // ListJabatanStrukturalParams
-type ListJabatanStruktural struct{}
+// type ListJabatanStruktural struct{}
 
 func (*repo) FindAll() ([]models.JabatanStruktural, error) {
 
@@ -31,4 +32,21 @@ func (*repo) FindAll() ([]models.JabatanStruktural, error) {
 	}
 
 	return jabatanStruktural, nil
+}
+
+// ReadJabatanStrukturalParams .
+type ReadJabatanStrukturalParams struct {
+	ID int64 `json:"id"`
+}
+
+func (*repo) FindById(arg ReadJabatanStrukturalParams) (*models.JabatanStruktural, error) {
+	var jabatanStruktural models.JabatanStruktural
+	var db = database.OpenDB()
+
+	err := db.Get(&jabatanStruktural, query.ReadJabatanStrukturalByID, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &jabatanStruktural, nil
 }
