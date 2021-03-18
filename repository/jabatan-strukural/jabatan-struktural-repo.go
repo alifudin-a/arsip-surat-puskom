@@ -12,6 +12,7 @@ type JabatanStrukturalRepository interface {
 	Delete(arg DeleteJabatanStrukturalParams) (err error)
 	IsExist(arg IsExistJabatanStrukturalParams) (bool, error)
 	Create(arg CreateJabatanStrukturalParams) (*models.JabatanStruktural, error)
+	Update(arg UpdateJabatanStrukturalParams) (*models.JabatanStruktural, error)
 }
 
 type repo struct{}
@@ -39,7 +40,7 @@ func (*repo) FindAll() ([]models.JabatanStruktural, error) {
 
 // ReadJabatanStrukturalParams .
 type ReadJabatanStrukturalParams struct {
-	ID int64 `json:"id"`
+	ID int64
 }
 
 func (*repo) FindById(arg ReadJabatanStrukturalParams) (*models.JabatanStruktural, error) {
@@ -56,7 +57,7 @@ func (*repo) FindById(arg ReadJabatanStrukturalParams) (*models.JabatanStruktura
 
 // DeleteJabatanStrukturalParams .
 type DeleteJabatanStrukturalParams struct {
-	ID int64 `json:"id"`
+	ID int64
 }
 
 func (*repo) Delete(arg DeleteJabatanStrukturalParams) (err error) {
@@ -79,7 +80,7 @@ func (*repo) Delete(arg DeleteJabatanStrukturalParams) (err error) {
 
 // IsExistJabatanStrukturalParams .
 type IsExistJabatanStrukturalParams struct {
-	ID int64 `json:"id"`
+	ID int64
 }
 
 func (*repo) IsExist(arg IsExistJabatanStrukturalParams) (bool, error) {
@@ -100,8 +101,8 @@ func (*repo) IsExist(arg IsExistJabatanStrukturalParams) (bool, error) {
 
 // CreateJabatanStrukturalParams .
 type CreateJabatanStrukturalParams struct {
-	Name     string `json:"name"`
-	Fullname string `json:"fullname"`
+	Name     string
+	Fullname string
 }
 
 func (*repo) Create(arg CreateJabatanStrukturalParams) (*models.JabatanStruktural, error) {
@@ -110,6 +111,32 @@ func (*repo) Create(arg CreateJabatanStrukturalParams) (*models.JabatanStruktura
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.CreateJabatanStruktural, arg.Name, arg.Fullname).StructScan(&jabatanStruktural)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &jabatanStruktural, nil
+}
+
+// UpdateJabatanStrukturalParams .
+type UpdateJabatanStrukturalParams struct {
+	ID       int64
+	Name     string
+	Fullname string
+}
+
+func (*repo) Update(arg UpdateJabatanStrukturalParams) (*models.JabatanStruktural, error) {
+	var jabatanStruktural models.JabatanStruktural
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.UpdateJabatanStruktural, arg.Name, arg.Fullname, arg.ID).StructScan(&jabatanStruktural)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
