@@ -9,6 +9,8 @@ import (
 type JabatanStrukturalRepository interface {
 	FindAll() ([]models.JabatanStruktural, error)
 	FindById(arg ReadJabatanStrukturalParams) (*models.JabatanStruktural, error)
+	Delete(arg DeleteJabatanStrukturalParams) (err error)
+	IsExist(arg IsExistJabatanStrukturalParams) (bool, error)
 }
 
 type repo struct{}
@@ -49,4 +51,48 @@ func (*repo) FindById(arg ReadJabatanStrukturalParams) (*models.JabatanStruktura
 	}
 
 	return &jabatanStruktural, nil
+}
+
+// DeleteJabatanStrukturalParams .
+type DeleteJabatanStrukturalParams struct {
+	ID int64 `json:"id"`
+}
+
+func (*repo) Delete(arg DeleteJabatanStrukturalParams) (err error) {
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	_, err = tx.Exec(query.DeleteJabatanStruktural, arg.ID)
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return
+	}
+
+	return nil
+}
+
+// IsExistJabatanStrukturalParams .
+type IsExistJabatanStrukturalParams struct {
+	ID int64 `json:"id"`
+}
+
+func (*repo) IsExist(arg IsExistJabatanStrukturalParams) (bool, error) {
+	var db = database.OpenDB()
+	var total int
+
+	err := db.Get(&total, query.IsExistJabatanStruktural, arg.ID)
+	if err != nil {
+		return false, nil
+	}
+
+	if total == 0 {
+		return false, nil
+	}
+
+	return true, nil
 }

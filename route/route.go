@@ -25,6 +25,7 @@ func InitRoute() *echo.Echo {
 	api := e.Group("/api")
 	api.GET("/jabatan_struktural", action.ListJabatanStrukturalHandler)
 	api.GET("/jabatan_struktural/:id", action.ReadJabatanStrukturalHandler)
+	api.DELETE("/jabatan_struktural/:id", action.DeleteJabatanStrukturalHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
