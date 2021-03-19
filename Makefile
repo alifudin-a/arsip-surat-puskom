@@ -8,3 +8,6 @@ exec:
 	./arsip-surat-puskom
 
 start: build exec
+
+develop:
+	git push origin feature/develop
