@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
-	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/user"
-	repository "github.com/alifudin-a/arsip-surat-puskom/repository/user"
+	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/jenis-surat"
+	repository "github.com/alifudin-a/arsip-surat-puskom/repository/jenis-surat"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,33 +18,33 @@ import (
 // 	return c.Validate(req)
 // }
 
-func CreateUserHandler(c echo.Context) (err error) {
+func CreateJenisSuratHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
-	var req = new(models.User)
-	var user *models.User
+	var req = new(models.JenisSurat)
+	var jenis *models.JenisSurat
 
 	if err = c.Bind(&req); err != nil {
 		return
 	}
 
-	repo := repository.NewUserRepository()
+	repo := repository.NewJenisSuratRepository()
 
-	arg := repository.CreateUserParams{
+	arg := repository.CreateJenisSuratParams{
+		Kode:      req.Kode,
 		Name:      req.Name,
-		Fullname:  req.FullName,
 		CreatedAt: *req.CreatedAt,
 	}
 
-	user, err = repo.Create(arg)
+	jenis, err = repo.Create(arg)
 	if err != nil {
 		return
 	}
 
 	resp.Code = http.StatusCreated
-	resp.Message = "Berhasil membuat user!"
+	resp.Message = "Berhasil membuat jenis surat!"
 	resp.Body = map[string]interface{}{
-		"user": user,
+		"jenis": jenis,
 	}
 
 	return c.JSON(http.StatusCreated, resp)

@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
-	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/user"
-	repository "github.com/alifudin-a/arsip-surat-puskom/repository/user"
+	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/jenis-surat"
+	repository "github.com/alifudin-a/arsip-surat-puskom/repository/jenis-surat"
 	"github.com/labstack/echo/v4"
 )
 
@@ -21,23 +21,23 @@ import (
 func UpdateUserHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
-	var req = new(models.User)
-	var user *models.User
+	var req = new(models.JenisSurat)
+	var jenis *models.JenisSurat
 
 	if err = c.Bind(&req); err != nil {
 		return
 	}
 
-	repo := repository.NewUserRepository()
+	repo := repository.NewJenisSuratRepository()
 
-	arg := repository.UpdateUserParams{
+	arg := repository.UpdateJenisSuratParams{
 		ID:        req.ID,
+		Kode:      req.Kode,
 		Name:      req.Name,
-		Fullname:  req.FullName,
 		UpdatedAt: *req.UpdatedAt,
 	}
 
-	exist, err := repo.IsExist(repository.IsExistUserParams{
+	exist, err := repo.IsExist(repository.IsExistJenisSuratParams{
 		ID: int64(arg.ID),
 	})
 	if err != nil {
@@ -51,7 +51,7 @@ func UpdateUserHandler(c echo.Context) (err error) {
 
 	}
 
-	user, err = repo.Update(arg)
+	jenis, err = repo.Update(arg)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func UpdateUserHandler(c echo.Context) (err error) {
 	resp.Code = http.StatusOK
 	resp.Message = "Berhasil mebgubah data!"
 	resp.Body = map[string]interface{}{
-		"user": user,
+		"jenis": jenis,
 	}
 
 	return c.JSON(http.StatusOK, resp)

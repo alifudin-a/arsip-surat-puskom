@@ -5,22 +5,22 @@ import (
 	"strconv"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
-	repository "github.com/alifudin-a/arsip-surat-puskom/repository/user"
+	repository "github.com/alifudin-a/arsip-surat-puskom/repository/jenis-surat"
 	"github.com/labstack/echo/v4"
 )
 
-func DeleteUserHandler(c echo.Context) (err error) {
+func DeleteJenisSuratHandler(c echo.Context) (err error) {
 	var resp helper.Response
 
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 
-	repo := repository.NewUserRepository()
+	repo := repository.NewJenisSuratRepository()
 
-	arg := repository.DeleteUserParams{
+	arg := repository.DeleteJenisSuratParams{
 		ID: int64(id),
 	}
 
-	exist, err := repo.IsExist(repository.IsExistUserParams{ID: id})
+	exist, err := repo.IsExist(repository.IsExistJenisSuratParams{ID: id})
 	if err != nil {
 		return err
 	}
