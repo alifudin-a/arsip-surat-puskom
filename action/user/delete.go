@@ -5,22 +5,22 @@ import (
 	"strconv"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
-	repository "github.com/alifudin-a/arsip-surat-puskom/repository/jabatan-strukural"
+	repository "github.com/alifudin-a/arsip-surat-puskom/repository/user"
 	"github.com/labstack/echo/v4"
 )
 
-func DeleteJabatanStrukturalHandler(c echo.Context) (err error) {
+func DeleteUserHandler(c echo.Context) (err error) {
 	var resp helper.Response
 
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
 
-	repo := repository.NewJabatanStrukturalRepository()
+	repo := repository.NewUserRepository()
 
-	arg := repository.DeleteJabatanStrukturalParams{
+	arg := repository.DeleteUserParams{
 		ID: int64(id),
 	}
 
-	exist, err := repo.IsExist(repository.IsExistJabatanStrukturalParams{ID: id})
+	exist, err := repo.IsExist(repository.IsExistUserParams{ID: id})
 	if err != nil {
 		return
 	}

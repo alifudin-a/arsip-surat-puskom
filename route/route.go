@@ -3,7 +3,7 @@ package route
 import (
 	"net/http"
 
-	action "github.com/alifudin-a/arsip-surat-puskom/action/jabatan-struktural"
+	action "github.com/alifudin-a/arsip-surat-puskom/action/user"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -23,11 +23,11 @@ func InitRoute() *echo.Echo {
 	}))
 
 	api := e.Group("/api")
-	api.GET("/jabatan_struktural", action.ListJabatanStrukturalHandler)
-	api.GET("/jabatan_struktural/:id", action.ReadJabatanStrukturalHandler)
-	api.DELETE("/jabatan_struktural/:id", action.DeleteJabatanStrukturalHandler)
-	api.POST("/jabatan_struktural", action.CreateJabatanStrukturalHandler)
-	api.PUT("/jabatan_struktural", action.UpdateJabatanStrukturalHandler)
+	api.GET("/user", action.ListUserHandler)
+	api.GET("/user/:id", action.ReadUserHandler)
+	api.DELETE("/user/:id", action.DeleteUserHandler)
+	api.POST("/user", action.CreateUserHandler)
+	api.PUT("/user", action.UpdateUserHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
