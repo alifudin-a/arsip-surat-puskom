@@ -10,7 +10,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ReadJenisSuratHandler(c echo.Context) (err error) {
+type Read struct{}
+
+func NewReadJenisSurat() *Read {
+	return &Read{}
+}
+
+func (rd *Read) ReadJenisSuratHandler(c echo.Context) (err error) {
 	var resp helper.Response
 
 	var jenis = &models.JenisSurat{}

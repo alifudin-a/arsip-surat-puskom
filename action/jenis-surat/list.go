@@ -9,7 +9,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ListJenisSuratHandler(c echo.Context) (err error) {
+type List struct{}
+
+func NewListJenisSurat() *List {
+	return &List{}
+}
+
+func (ls *List) ListJenisSuratHandler(c echo.Context) (err error) {
 
 	var jenis []models.JenisSurat
 	var resp helper.Response

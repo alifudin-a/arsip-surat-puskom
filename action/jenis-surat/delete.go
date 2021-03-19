@@ -9,7 +9,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func DeleteJenisSuratHandler(c echo.Context) (err error) {
+type Delete struct{}
+
+func NewDeleteJenisSurat() *Delete {
+	return &Delete{}
+}
+
+func (dl *Delete) DeleteJenisSuratHandler(c echo.Context) (err error) {
 	var resp helper.Response
 
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
