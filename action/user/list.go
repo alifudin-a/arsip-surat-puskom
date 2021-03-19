@@ -9,7 +9,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ListUserHandler(c echo.Context) (err error) {
+type List struct{}
+
+func NewListUser() *List {
+	return &List{}
+}
+
+func (ls *List) ListUserHandler(c echo.Context) (err error) {
 
 	var user []models.User
 	var resp helper.Response

@@ -28,11 +28,18 @@ func InitRoute() *echo.Echo {
 	}))
 
 	api := e.Group("/api")
-	api.GET("/user", actionUser.ListUserHandler)
-	api.GET("/user/:id", actionUser.ReadUserHandler)
-	api.DELETE("/user/:id", actionUser.DeleteUserHandler)
-	api.POST("/user", actionUser.CreateUserHandler)
-	api.PUT("/user", actionUser.UpdateUserHandler)
+
+	usrCreate := actionUser.NewCreateUser()
+	usrDelete := actionUser.NewDeleteUser()
+	usrList := actionUser.NewListUser()
+	usrRead := actionUser.NewReadUser()
+	usrUpdate := actionUser.NewUpdateUser()
+
+	api.GET("/user", usrList.ListUserHandler)
+	api.GET("/user/:id", usrRead.ReadUserHandler)
+	api.DELETE("/user/:id", usrDelete.DeleteUserHandler)
+	api.POST("/user", usrCreate.CreateUserHandler)
+	api.PUT("/user", usrUpdate.UpdateUserHandler)
 
 	jsCreate := actionJenisSurat.NewCreateJenisSurat()
 	jsDelete := actionJenisSurat.NewDeleteJenisSurat()

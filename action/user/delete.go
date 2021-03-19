@@ -9,7 +9,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func DeleteUserHandler(c echo.Context) (err error) {
+type Delete struct{}
+
+func NewDeleteUser() *Delete {
+	return &Delete{}
+}
+
+func (dl *Delete) DeleteUserHandler(c echo.Context) (err error) {
 	var resp helper.Response
 
 	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)

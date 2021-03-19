@@ -9,23 +9,30 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// func validateCreate(req *models.User, c echo.Context) (err error) {
+type Create struct{}
 
-// 	if err = c.Bind(req); err != nil {
-// 		return err
-// 	}
+func NewCreateUser() *Create {
+	return &Create{}
+}
 
-// 	return c.Validate(req)
-// }
+func (cr *Create) validate(req *models.User, c echo.Context) (err error) {
 
-func CreateUserHandler(c echo.Context) (err error) {
+	if err = c.Bind(req); err != nil {
+		return err
+	}
+
+	return c.Validate(req)
+}
+
+func (cr *Create) CreateUserHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
 	var req = new(models.User)
 	var user *models.User
 
-	if err = c.Bind(&req); err != nil {
-		return
+	err = cr.validate(req, c)
+	if err != nil {
+		return err
 	}
 
 	repo := repository.NewUserRepository()

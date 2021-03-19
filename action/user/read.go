@@ -10,7 +10,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ReadUserHandler(c echo.Context) (err error) {
+type Read struct{}
+
+func NewReadUser() *Read {
+	return &Read{}
+}
+
+func (rd *Read) ReadUserHandler(c echo.Context) (err error) {
 	var resp helper.Response
 
 	var user = &models.User{}

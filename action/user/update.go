@@ -9,23 +9,30 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// func validateUpdate(req *models.User, c echo.Context) (err error) {
+type Update struct{}
 
-// 	if err = c.Bind(req); err != nil {
-// 		return err
-// 	}
+func NewUpdateUser() *Update {
+	return &Update{}
+}
 
-// 	return c.Validate(req)
-// }
+func (up *Update) validate(req *models.User, c echo.Context) (err error) {
 
-func UpdateUserHandler(c echo.Context) (err error) {
+	if err = c.Bind(req); err != nil {
+		return err
+	}
+
+	return c.Validate(req)
+}
+
+func (up *Update) UpdateUserHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
 	var req = new(models.User)
 	var user *models.User
 
-	if err = c.Bind(&req); err != nil {
-		return
+	err = up.validate(req, c)
+	if err != nil {
+		return err
 	}
 
 	repo := repository.NewUserRepository()
