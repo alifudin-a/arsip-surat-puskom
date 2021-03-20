@@ -2,6 +2,7 @@ package action
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/user"
@@ -29,6 +30,7 @@ func (cr *Create) CreateUserHandler(c echo.Context) (err error) {
 	var resp helper.Response
 	var req = new(models.User)
 	var user *models.User
+	var t = time.Now()
 
 	err = cr.validate(req, c)
 	if err != nil {
@@ -40,7 +42,7 @@ func (cr *Create) CreateUserHandler(c echo.Context) (err error) {
 	arg := repository.CreateUserParams{
 		Name:      req.Name,
 		Fullname:  req.FullName,
-		CreatedAt: *req.CreatedAt,
+		CreatedAt: t.Format(helper.LayoutTime),
 	}
 
 	user, err = repo.Create(arg)

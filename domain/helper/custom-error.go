@@ -18,7 +18,7 @@ func CustomReadableError(err error, c echo.Context) {
 		for _, err := range castedObject {
 			switch err.Tag() {
 			case "required":
-				report.Message = fmt.Sprintf("%s tidak boleh kosong",
+				report.Message = fmt.Sprintf("%s harus valid dan tidak boleh kosong",
 					err.Field())
 			case "numeric":
 				report.Message = fmt.Sprintf("%s harus berupa angka",

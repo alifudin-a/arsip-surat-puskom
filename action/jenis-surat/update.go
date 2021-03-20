@@ -2,6 +2,7 @@ package action
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/jenis-surat"
@@ -29,6 +30,7 @@ func (up *Update) UpdateUserHandler(c echo.Context) (err error) {
 	var resp helper.Response
 	var req = new(models.JenisSurat)
 	var jenis *models.JenisSurat
+	var t = time.Now()
 
 	err = up.validate(req, c)
 	if err != nil {
@@ -41,7 +43,7 @@ func (up *Update) UpdateUserHandler(c echo.Context) (err error) {
 		ID:        req.ID,
 		Kode:      req.Kode,
 		Name:      req.Name,
-		UpdatedAt: *req.UpdatedAt,
+		UpdatedAt: t.Format(helper.LayoutTime),
 	}
 
 	exist, err := repo.IsExist(repository.IsExistJenisSuratParams{

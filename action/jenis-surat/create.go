@@ -2,6 +2,7 @@ package action
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/jenis-surat"
@@ -29,6 +30,7 @@ func (cr *Create) CreateJenisSuratHandler(c echo.Context) (err error) {
 	var resp helper.Response
 	var req = new(models.JenisSurat)
 	var jenis *models.JenisSurat
+	var t = time.Now()
 
 	err = cr.validate(req, c)
 	if err != nil {
@@ -40,7 +42,7 @@ func (cr *Create) CreateJenisSuratHandler(c echo.Context) (err error) {
 	arg := repository.CreateJenisSuratParams{
 		Kode:      req.Kode,
 		Name:      req.Name,
-		CreatedAt: *req.CreatedAt,
+		CreatedAt: t.Format(helper.LayoutTime),
 	}
 
 	jenis, err = repo.Create(arg)

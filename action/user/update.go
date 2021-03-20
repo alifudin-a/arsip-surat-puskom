@@ -2,6 +2,7 @@ package action
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/user"
@@ -29,6 +30,7 @@ func (up *Update) UpdateUserHandler(c echo.Context) (err error) {
 	var resp helper.Response
 	var req = new(models.User)
 	var user *models.User
+	var t = time.Now()
 
 	err = up.validate(req, c)
 	if err != nil {
@@ -41,7 +43,7 @@ func (up *Update) UpdateUserHandler(c echo.Context) (err error) {
 		ID:        req.ID,
 		Name:      req.Name,
 		Fullname:  req.FullName,
-		UpdatedAt: *req.UpdatedAt,
+		UpdatedAt: t.Format(helper.LayoutTime),
 	}
 
 	exist, err := repo.IsExist(repository.IsExistUserParams{
