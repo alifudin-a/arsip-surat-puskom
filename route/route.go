@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	actionJenisSurat "github.com/alifudin-a/arsip-surat-puskom/action/jenis-surat"
+	actionSuratKeluar "github.com/alifudin-a/arsip-surat-puskom/action/surat-keluar"
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	validator "github.com/go-playground/validator/v10"
@@ -52,6 +53,18 @@ func InitRoute() *echo.Echo {
 	api.DELETE("/jenis_surat/:id", jsDelete.DeleteJenisSuratHandler)
 	api.POST("/jenis_surat", jsCreate.CreateJenisSuratHandler)
 	api.PUT("/jenis_surat", jsUpdate.UpdateUserHandler)
+
+	skList := actionSuratKeluar.NewListSuratKeluar()
+	skRead := actionSuratKeluar.NewReadSuratKeluar()
+	skDelete := actionSuratKeluar.NewDeleteSuratKeluar()
+	skCreate := actionSuratKeluar.NewCreateSuratKeluar()
+	skUpdate := actionSuratKeluar.NewUpdateSuratKeluar()
+
+	api.GET("/surat_keluar", skList.ListSuratKeluarHandler)
+	api.GET("/surat_keluar/:id", skRead.ReadSuratKeluarHandler)
+	api.DELETE("/surat_keluar/:id", skDelete.DeleteSuratKeluarHandler)
+	api.POST("/surat_keluar", skCreate.NewCreateSuratKeluarHandler)
+	api.PUT("/surat_keluar", skUpdate.NewUpdateSuratKeluarHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 

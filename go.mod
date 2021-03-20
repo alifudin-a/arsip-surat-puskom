@@ -9,6 +9,5 @@ require (
 	github.com/labstack/echo/v4 v4.2.1
 	github.com/lib/pq v1.10.0
 	github.com/stretchr/testify v1.5.1 // indirect
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v9 v9.31.0
+	gopkg.in/guregu/null.v4 v4.0.0
 )
