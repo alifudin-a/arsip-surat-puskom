@@ -9,5 +9,4 @@ require (
 	github.com/labstack/echo/v4 v4.2.1
 	github.com/lib/pq v1.10.0
 	github.com/stretchr/testify v1.5.1 // indirect
-	gopkg.in/guregu/null.v4 v4.0.0
 )
