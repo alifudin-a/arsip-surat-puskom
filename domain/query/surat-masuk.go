@@ -12,7 +12,7 @@ select
 	tjs."name" as jenis,
 	tsm.keterangan
 from
-	tbl_surat_masuk tss
+	tbl_surat_masuk tsm
 join tbl_pengguna tp1 on tp1.id = tsm.id_pengirim
 join tbl_pengguna tp2 on tp2.id = tsm.id_penerima 
 left join tbl_jenis_surat tjs on tjs.id = tsm.id_jenis;`
