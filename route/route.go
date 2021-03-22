@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	actionJenisSurat "github.com/alifudin-a/arsip-surat-puskom/action/jenis-surat"
+	actionLogin "github.com/alifudin-a/arsip-surat-puskom/action/login"
 	actionSuratKeluar "github.com/alifudin-a/arsip-surat-puskom/action/surat-keluar"
 	actionSuratMasuk "github.com/alifudin-a/arsip-surat-puskom/action/surat-masuk"
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
@@ -78,6 +79,15 @@ func InitRoute() *echo.Echo {
 	api.DELETE("/surat_masuk/:id", smDelete.DeleteSuratMasukHandler)
 	api.POST("/surat_masuk", smCreate.NewCreateSuratMasukHandler)
 	api.PUT("/surat_masuk", smUpdate.NewUpdateSuratMasukHandler)
+
+	login := actionLogin.NewLoginHandler()
+	loginV2 := actionLogin.NewLoginHandlerV2()
+
+	api.POST("/login", login.LoginHandler)
+	api.POST("/login_v2", loginV2.LoginHandlerV2)
+
+	skCreateV2 := actionSuratKeluar.NewCreateSuratKeluarV2()
+	api.POST("/surat_keluar_v2", skCreateV2.NewCreateSuratKeluarHandlerV2)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
