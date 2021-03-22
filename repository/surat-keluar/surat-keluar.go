@@ -12,6 +12,7 @@ type SuratKeluarRepository interface {
 	Delete(arg DeleteSuratKeluarParams) (err error)
 	IsExist(arg IsExistSuratKeluarParams) (bool, error)
 	Create(arg CreateSuratKeluarParams) (*models.SuratKeluar, error)
+	CreateV2(arg CreateSuratKeluarParamsV2) (*models.CreateSuratKeluar, error)
 	Update(arg UpdateSuratKeluarParams) (*models.SuratKeluar, error)
 }
 
@@ -164,6 +165,42 @@ func (*repo) Update(arg UpdateSuratKeluarParams) (*models.SuratKeluar, error) {
 		arg.Keterangan,
 		arg.UpdatedAt,
 		arg.ID,
+	).StructScan(&keluar)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &keluar, nil
+}
+
+// CreateSuratKeluarParams .
+type CreateSuratKeluarParamsV2 struct {
+	Tanggal    string
+	Nomor      string
+	IDPengirim int64
+	Perihal    string
+	Keterangan string
+	CreatedAt  string
+}
+
+func (*repo) CreateV2(arg CreateSuratKeluarParamsV2) (*models.CreateSuratKeluar, error) {
+	var keluar models.CreateSuratKeluar
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.CreateSuratKeluar,
+		arg.Tanggal,
+		arg.Nomor,
+		arg.IDPengirim,
+		arg.Perihal,
+		arg.Keterangan,
+		arg.CreatedAt,
 	).StructScan(&keluar)
 	if err != nil {
 		tx.Rollback()
