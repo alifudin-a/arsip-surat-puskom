@@ -192,6 +192,11 @@ type CreateSuratKeluarParamsV2 struct {
 func (*repo) CreateV2(arg CreateSuratKeluarParamsV2) (*models.CreateSuratKeluar, error) {
 	var keluar models.CreateSuratKeluar
 	var db = database.OpenDB()
+	emptyString := ""
+
+	if keluar.Keterangan == nil {
+		keluar.Keterangan = &emptyString
+	}
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.CreateSuratKeluar,
