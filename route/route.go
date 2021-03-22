@@ -5,6 +5,7 @@ import (
 
 	actionJenisSurat "github.com/alifudin-a/arsip-surat-puskom/action/jenis-surat"
 	actionLogin "github.com/alifudin-a/arsip-surat-puskom/action/login"
+	actionPenerima "github.com/alifudin-a/arsip-surat-puskom/action/penerima"
 	actionSuratKeluar "github.com/alifudin-a/arsip-surat-puskom/action/surat-keluar"
 	actionSuratMasuk "github.com/alifudin-a/arsip-surat-puskom/action/surat-masuk"
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
@@ -72,12 +73,14 @@ func InitRoute() *echo.Echo {
 	smRead := actionSuratMasuk.NewReadSuratMasuk()
 	smDelete := actionSuratMasuk.NewDeleteSuratMasuk()
 	smCreate := actionSuratMasuk.NewCreateSuratMasuk()
+	skCreateV2 := actionSuratKeluar.NewCreateSuratKeluarV2()
 	smUpdate := actionSuratMasuk.NewUpdateSuratMasuk()
 
 	api.GET("/surat_masuk", smList.ListSuratMasukHandler)
 	api.GET("/surat_masuk/:id", smRead.ReadSuratMasukHandler)
 	api.DELETE("/surat_masuk/:id", smDelete.DeleteSuratMasukHandler)
 	api.POST("/surat_masuk", smCreate.NewCreateSuratMasukHandler)
+	api.POST("/surat_keluar_v2", skCreateV2.NewCreateSuratKeluarHandlerV2)
 	api.PUT("/surat_masuk", smUpdate.NewUpdateSuratMasukHandler)
 
 	login := actionLogin.NewLoginHandler()
@@ -86,8 +89,17 @@ func InitRoute() *echo.Echo {
 	api.POST("/login", login.LoginHandler)
 	api.POST("/login_v2", loginV2.LoginHandlerV2)
 
-	skCreateV2 := actionSuratKeluar.NewCreateSuratKeluarV2()
-	api.POST("/surat_keluar_v2", skCreateV2.NewCreateSuratKeluarHandlerV2)
+	pList := actionPenerima.NewListPenerima()
+	pRead := actionPenerima.NewReadPenerima()
+	pDelete := actionPenerima.NewDeletePenerima()
+	pCreate := actionPenerima.NewCreatePenerima()
+	pUpdate := actionPenerima.NewUpdatePenerima()
+
+	api.GET("/penerima", pList.ListPenerimaHandler)
+	api.GET("/penerima/:id", pRead.ReadPenerimaHandler)
+	api.DELETE("/penerima/:id", pDelete.DeletePenerimaHandler)
+	api.POST("/penerima", pCreate.CreatePenerimaHandler)
+	api.PUT("/penerima", pUpdate.UpdatePenerimaHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
