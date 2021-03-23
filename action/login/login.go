@@ -3,6 +3,7 @@ package action
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/login"
@@ -17,13 +18,19 @@ func NewLoginHandler() *Login {
 	return &Login{}
 }
 
+type LoginTokenClaim struct {
+	*jwt.StandardClaims
+	models.Login
+}
+
 func (lg *Login) LoginHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
 	var login *models.Login
+	expires := time.Now().Add(time.Second * 60).Unix()
 
 	if err = c.Bind(&login); err != nil {
-		return err
+		return
 	}
 
 	username := login.Username
@@ -43,15 +50,19 @@ func (lg *Login) LoginHandler(c echo.Context) (err error) {
 		return c.JSON(http.StatusUnauthorized, resp)
 	}
 
-	// Generate jwt token
 	token := jwt.New(jwt.SigningMethodHS256)
-
-	claims := token.Claims.(jwt.MapClaims)
-	claims["id"] = login.ID
-	claims["id_pengguna"] = login.IDPengguna
-	claims["username"] = login.Username
-	claims["created_at"] = login.CreatedAt
-	claims["updated_at"] = login.UpdatedAt
+	token.Claims = &LoginTokenClaim{
+		&jwt.StandardClaims{
+			ExpiresAt: expires,
+		},
+		models.Login{
+			ID:         login.ID,
+			IDPengguna: login.IDPengguna,
+			Username:   login.Username,
+			CreatedAt:  login.CreatedAt,
+			UpdatedAt:  login.UpdatedAt,
+		},
+	}
 
 	tokenJwt, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
