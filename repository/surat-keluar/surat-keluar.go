@@ -14,6 +14,7 @@ type SuratKeluarRepository interface {
 	Create(arg CreateSuratKeluarParams) (*models.SuratKeluar, error)
 	CreateV2(arg CreateSuratKeluarParamsV2) (*models.CreateSuratKeluar, error)
 	Update(arg UpdateSuratKeluarParams) (*models.SuratKeluar, error)
+	ListJoin() ([]models.SelectJoinSuratKeluar, error)
 }
 
 type repo struct{}
@@ -101,7 +102,6 @@ func (*repo) IsExist(arg IsExistSuratKeluarParams) (bool, error) {
 type CreateSuratKeluarParams struct {
 	Tanggal    string
 	Nomor      string
-	IDPenerima int64
 	IDPengirim int64
 	Perihal    string
 	IDJenis    int64
@@ -117,7 +117,6 @@ func (*repo) Create(arg CreateSuratKeluarParams) (*models.SuratKeluar, error) {
 	err := tx.QueryRowx(query.CreateSuratKeluar,
 		arg.Tanggal,
 		arg.Nomor,
-		arg.IDPenerima,
 		arg.IDPengirim,
 		arg.Perihal,
 		arg.IDJenis,
@@ -142,7 +141,6 @@ type UpdateSuratKeluarParams struct {
 	ID         int64
 	Tanggal    string
 	Nomor      string
-	IDPenerima int64
 	IDPengirim int64
 	Perihal    string
 	IDJenis    int64
@@ -158,7 +156,6 @@ func (*repo) Update(arg UpdateSuratKeluarParams) (*models.SuratKeluar, error) {
 	err := tx.QueryRowx(query.UpdateSuratKeluar,
 		arg.Tanggal,
 		arg.Nomor,
-		arg.IDPenerima,
 		arg.IDPengirim,
 		arg.Perihal,
 		arg.IDJenis,
@@ -218,4 +215,35 @@ func (*repo) CreateV2(arg CreateSuratKeluarParamsV2) (*models.CreateSuratKeluar,
 	}
 
 	return &keluar, nil
+}
+
+func (*repo) ListJoin() ([]models.SelectJoinSuratKeluar, error) {
+	var db = database.OpenDB()
+
+	list, err := db.Queryx(query.SuratKeluarJoin)
+	if err != nil {
+		return nil, err
+	}
+
+	joins := []models.SelectJoinSuratKeluar{}
+
+	for list.Next() {
+		var join models.SelectJoinSuratKeluar
+		err = list.Scan(
+			&join.ID,
+			&join.Tanggal,
+			&join.Nomor,
+			&join.Pengirim,
+			&join.Perihal,
+			&join.Keterangan,
+			&join.Penerima.Penerima,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		joins = append(joins, join)
+	}
+
+	return joins, nil
 }
