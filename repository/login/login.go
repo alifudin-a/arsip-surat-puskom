@@ -7,7 +7,7 @@ import (
 )
 
 type LoginRepository interface {
-	GetUsername(arg GetUsernameParams) (*models.Login, error)
+	Login(arg LoginParams) (*models.Login, error)
 }
 
 type repo struct{}
@@ -16,16 +16,16 @@ func NewLoginRepository() LoginRepository {
 	return &repo{}
 }
 
-type GetUsernameParams struct {
+type LoginParams struct {
 	Username string
 	Password string
 }
 
-func (*repo) GetUsername(arg GetUsernameParams) (*models.Login, error) {
+func (*repo) Login(arg LoginParams) (*models.Login, error) {
 	var login models.Login
 	var db = database.OpenDB()
 
-	err := db.Get(&login, query.GetUsername, arg.Username, arg.Password)
+	err := db.Get(&login, query.Login, arg.Username, arg.Password)
 	if err != nil {
 		return nil, err
 	}
