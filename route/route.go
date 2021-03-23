@@ -84,10 +84,8 @@ func InitRoute() *echo.Echo {
 	api.PUT("/surat_masuk", smUpdate.NewUpdateSuratMasukHandler)
 
 	login := actionLogin.NewLoginHandler()
-	loginV2 := actionLogin.NewLoginHandlerV2()
 
 	api.POST("/login", login.LoginHandler)
-	api.POST("/login_v2", loginV2.LoginHandlerV2)
 
 	pList := actionPenerima.NewListPenerima()
 	pRead := actionPenerima.NewReadPenerima()
@@ -100,6 +98,9 @@ func InitRoute() *echo.Echo {
 	api.DELETE("/penerima/:id", pDelete.DeletePenerimaHandler)
 	api.POST("/penerima", pCreate.CreatePenerimaHandler)
 	api.PUT("/penerima", pUpdate.UpdatePenerimaHandler)
+
+	skListJoin := actionSuratKeluar.NewListJoinSuratKeluar()
+	api.GET("/surat_keluar_v2", skListJoin.ListJoinSuratKeluarHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
