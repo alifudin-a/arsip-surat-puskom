@@ -9,6 +9,7 @@ import (
 	actionSuratKeluar "github.com/alifudin-a/arsip-surat-puskom/action/surat-keluar"
 	actionSuratMasuk "github.com/alifudin-a/arsip-surat-puskom/action/surat-masuk"
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
+	actionSurat "github.com/alifudin-a/arsip-surat-puskom/action/surat"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	validator "github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -101,6 +102,18 @@ func InitRoute() *echo.Echo {
 
 	skListJoin := actionSuratKeluar.NewListJoinSuratKeluar()
 	api.GET("/surat_keluar_v2", skListJoin.ListJoinSuratKeluarHandler)
+
+	sList := actionSurat.NewListSurat()
+	sRead := actionSurat.NewReadSurat()
+	sDelete := actionSurat.NewDeleteSurat()
+	sCreate := actionSurat.NewCreateSurat()
+	sUpdate := actionSurat.NewUpdateSurat()
+
+	api.GET("/surat", sList.ListSuratHandler)
+	api.GET("/surat/:id", sRead.ReadSuratHandler)
+	api.DELETE("/surat/:id", sDelete.DeleteSuratHandler)
+	api.POST("/surat", sCreate.CreateSuratHandler)
+	api.PUT("/surat", sUpdate.UpdateSuratHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
