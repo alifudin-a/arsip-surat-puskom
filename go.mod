@@ -3,6 +3,7 @@ module github.com/alifudin-a/arsip-surat-puskom
 go 1.16
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/jmoiron/sqlx v1.3.1
 	github.com/joho/godotenv v1.3.0
