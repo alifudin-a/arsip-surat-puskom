@@ -62,3 +62,21 @@ tbl_surat_keluar (
 ) RETURNING *;`
 
 var IsExistSuratKeluar = `SELECT COUNT(*) FROM tbl_surat_keluar WHERE id = $1;`
+
+var SuratKeluarJoin = `
+select
+	tsk.id,
+	tsk.tanggal,
+	tsk.nomor,
+	tsk.perihal,
+	tp1."name" as pengirim,
+	tsk.keterangan,
+	tp.id,
+	tp.id_surat,
+	tp2."name" as penerima
+from
+	tbl_surat_keluar tsk
+join tbl_pengguna tp1 on tp1.id = tsk.id_pengirim
+join tbl_penerima tp on tsk.id = tp.id_surat
+join tbl_pengguna tp2 on tp.id_pengguna = tp2.id;
+`
