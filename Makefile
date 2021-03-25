@@ -10,4 +10,4 @@ exec:
 start: build exec
 
 develop:
-	git push origin feature/develop
+	git push origin develop
