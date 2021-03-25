@@ -7,8 +7,6 @@ import (
 	actionLogin "github.com/alifudin-a/arsip-surat-puskom/action/login"
 	actionPenerima "github.com/alifudin-a/arsip-surat-puskom/action/penerima"
 	actionSurat "github.com/alifudin-a/arsip-surat-puskom/action/surat"
-	actionSuratKeluar "github.com/alifudin-a/arsip-surat-puskom/action/surat-keluar"
-	actionSuratMasuk "github.com/alifudin-a/arsip-surat-puskom/action/surat-masuk"
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	validator "github.com/go-playground/validator/v10"
@@ -58,34 +56,7 @@ func InitRoute() *echo.Echo {
 	api.POST("/jenis_surat", jsCreate.CreateJenisSuratHandler)
 	api.PUT("/jenis_surat", jsUpdate.UpdateUserHandler)
 
-	skList := actionSuratKeluar.NewListSuratKeluar()
-	skRead := actionSuratKeluar.NewReadSuratKeluar()
-	skDelete := actionSuratKeluar.NewDeleteSuratKeluar()
-	skCreate := actionSuratKeluar.NewCreateSuratKeluar()
-	skUpdate := actionSuratKeluar.NewUpdateSuratKeluar()
-
-	api.GET("/surat_keluar", skList.ListSuratKeluarHandler)
-	api.GET("/surat_keluar/:id", skRead.ReadSuratKeluarHandler)
-	api.DELETE("/surat_keluar/:id", skDelete.DeleteSuratKeluarHandler)
-	api.POST("/surat_keluar", skCreate.NewCreateSuratKeluarHandler)
-	api.PUT("/surat_keluar", skUpdate.NewUpdateSuratKeluarHandler)
-
-	smList := actionSuratMasuk.NewListSuratMasuk()
-	smRead := actionSuratMasuk.NewReadSuratMasuk()
-	smDelete := actionSuratMasuk.NewDeleteSuratMasuk()
-	smCreate := actionSuratMasuk.NewCreateSuratMasuk()
-	skCreateV2 := actionSuratKeluar.NewCreateSuratKeluarV2()
-	smUpdate := actionSuratMasuk.NewUpdateSuratMasuk()
-
-	api.GET("/surat_masuk", smList.ListSuratMasukHandler)
-	api.GET("/surat_masuk/:id", smRead.ReadSuratMasukHandler)
-	api.DELETE("/surat_masuk/:id", smDelete.DeleteSuratMasukHandler)
-	api.POST("/surat_masuk", smCreate.NewCreateSuratMasukHandler)
-	api.POST("/surat_keluar_v2", skCreateV2.NewCreateSuratKeluarHandlerV2)
-	api.PUT("/surat_masuk", smUpdate.NewUpdateSuratMasukHandler)
-
 	login := actionLogin.NewLoginHandler()
-
 	api.POST("/login", login.LoginHandler)
 
 	pList := actionPenerima.NewListPenerima()
@@ -99,9 +70,6 @@ func InitRoute() *echo.Echo {
 	api.DELETE("/penerima/:id", pDelete.DeletePenerimaHandler)
 	api.POST("/penerima", pCreate.CreatePenerimaHandler)
 	api.PUT("/penerima", pUpdate.UpdatePenerimaHandler)
-
-	skListJoin := actionSuratKeluar.NewListJoinSuratKeluar()
-	api.GET("/surat_keluar_v2", skListJoin.ListJoinSuratKeluarHandler)
 
 	sList := actionSurat.NewListSurat()
 	sRead := actionSurat.NewReadSurat()
