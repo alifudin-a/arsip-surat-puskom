@@ -41,7 +41,6 @@ func (up *Update) UpdateUserHandler(c echo.Context) (err error) {
 
 	arg := repository.UpdateJenisSuratParams{
 		ID:        req.ID,
-		Kode:      req.Kode,
 		Name:      req.Name,
 		UpdatedAt: t.Format(helper.LayoutTime),
 	}

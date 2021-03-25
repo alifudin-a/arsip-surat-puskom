@@ -40,7 +40,6 @@ func (cr *Create) CreateJenisSuratHandler(c echo.Context) (err error) {
 	repo := repository.NewJenisSuratRepository()
 
 	arg := repository.CreateJenisSuratParams{
-		Kode:      req.Kode,
 		Name:      req.Name,
 		CreatedAt: t.Format(helper.LayoutTime),
 	}
