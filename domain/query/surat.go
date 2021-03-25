@@ -1,24 +1,48 @@
 package query
 
-var ListSurat = `SELECT * FROM tbl_surat OREDER BY id;`
+var ReadSuratByID = `
+select row_to_json(t)
+from (
+	select
+		ts.id,
+		ts.tanggal,
+		ts.nomor,
+		ts.id_pengirim,
+		tp2."name" as pengirim,
+		ts.perihal,
+		ts.id_jenis,
+		tjs."name" as jenis,
+		ts.keterangan,
+		(
+			select array_to_json(array_agg(row_to_json(d)))
+			from (
+				select 
+					tp.id as id,
+					tp3."name" as penerima
+				from tbl_penerima tp
+				join tbl_pengguna tp3 on tp3.id = tp.id_pengguna 
+				where tp.id_surat=ts.id
+			)d
+		)as penerima
+	from tbl_surat ts
+	join tbl_pengguna tp2 on tp2.id = ts.id_pengirim
+	left join tbl_jenis_surat tjs on tjs.id = ts.id_jenis where ts.id = $1
+)t;`
 
-var ReadSuratByID = `SELECT * FROM tbl_surat WHERE id = $1;`
-
-var DeleteSurat = `DELETE FROM tbl_surat WHERE id= $1;`
+var DeleteSurat = `DELETE FROM tbl_surat WHERE id = $1;`
 
 var CreateSurat = `
 INSERT INTO
 tbl_surat (
 	tanggal,
 	nomor,
-	id_penerima,
 	id_pengirim,
 	perihal,
 	id_jenis,
 	keterangan,
 	created_at
 ) VALUES (
-	$1, $2, $3, $4, $5, $6, $7, $8
+	$1, $2, $3, $4, $5, $6, $7
 ) RETURNING *;`
 
 var UpdateSurat = `
@@ -27,14 +51,40 @@ UPDATE
 SET 
 	tanggal = $1, 
 	nomor = $2, 
-	id_penerima = $3, 
-	id_pengirim = $4, 
-	perihal = $5,
-	id_jenis = $6,
-	keterangan = $7,
-	updated_at = $8
+	id_pengirim = $3, 
+	perihal = $4,
+	id_jenis = $5,
+	keterangan = $6,
+	updated_at = $7
 WHERE
-	id = $9 
+	id = $8 
 RETURNING *;`
 
 var IsExistSurat = `SELECT COUNT(*) FROM tbl_surat WHERE id= $1;`
+
+var ListSurat = `
+SELECT row_to_json(t)
+FROM (
+	SELECT
+		ts.id,
+		ts.tanggal,
+		ts.nomor,
+		tp2."name" AS pengirim,
+		ts.perihal,
+		tjs."name" AS jenis,
+		ts.keterangan,
+		(
+			SELECT array_to_json(array_agg(row_to_json(d)))
+			FROM (
+				SELECT 
+					tp.id as id,
+					tp3."name" as name
+				FROM tbl_penerima tp
+				JOIN tbl_pengguna tp3 on tp3.id = tp.id_pengguna 
+				WHERE tp.id_surat=ts.id
+			)d
+		)AS penerima
+	FROM tbl_surat ts
+	JOIN tbl_pengguna tp2 on tp2.id = ts.id_pengirim
+	LEFT JOIN tbl_jenis_surat tjs on tjs.id = ts.id_jenis 
+)t;`

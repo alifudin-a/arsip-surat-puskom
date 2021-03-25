@@ -1,9 +1,12 @@
 package repository
 
 import (
+	"encoding/json"
+
 	database "github.com/alifudin-a/arsip-surat-puskom/database/psql"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/query"
+	"github.com/jmoiron/sqlx/types"
 )
 
 type SuratRepository interface {
@@ -22,14 +25,29 @@ func NewSuratRepository() SuratRepository {
 }
 
 func (*repo) FindAll() ([]models.ListSurat, error) {
-
 	var surat []models.ListSurat
-
 	var db = database.OpenDB()
+	var jsonString types.JSONText
 
-	err := db.Select(&surat, query.ListSurat)
+	rows, err := db.Queryx(query.ListSurat)
 	if err != nil {
 		return nil, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&jsonString)
+		if err != nil {
+			return nil, err
+		}
+
+		var s models.ListSurat
+
+		err = json.Unmarshal([]byte(jsonString), &s)
+		if err != nil {
+			return nil, err
+		}
+
+		surat = append(surat, s)
 	}
 
 	return surat, nil
@@ -43,10 +61,23 @@ type ReadSuratParams struct {
 func (*repo) FindById(arg ReadSuratParams) (*models.ListSurat, error) {
 	var surat models.ListSurat
 	var db = database.OpenDB()
+	var jsonString types.JSONText
 
-	err := db.Get(&surat, query.ReadSuratByID, arg.ID)
+	row, err := db.Queryx(query.ReadSuratByID, arg.ID)
 	if err != nil {
 		return nil, err
+	}
+
+	for row.Next() {
+		err = row.Scan(&jsonString)
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal([]byte(jsonString), &surat)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &surat, nil

@@ -15,7 +15,6 @@ func CreateSurat(params *models.Surat) repository.CreateSuratParams {
 
 	res.Tanggal = params.Tanggal
 	res.Nomor = params.Nomor
-	res.IDPenerima = params.IDPenerima
 	res.IDPengirim = params.IDPengirim
 	res.Perihal = params.Perihal
 	res.IDJenis = *params.IDJenis
@@ -33,7 +32,6 @@ func UpdateSurat(params *models.Surat) repository.UpdateSuratParams {
 	res.ID = params.ID
 	res.Tanggal = params.Tanggal
 	res.Nomor = params.Nomor
-	res.IDPenerima = params.IDPenerima
 	res.IDPengirim = params.IDPengirim
 	res.Perihal = params.Perihal
 	res.IDJenis = *params.IDJenis
