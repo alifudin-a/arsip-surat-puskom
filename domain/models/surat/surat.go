@@ -28,12 +28,22 @@ type SelectSurat struct {
 	UpdatedAt  *string `json:"updated_at,omitempty" db:"updated_at"`
 }
 
-type Penerima struct {
+type ListPenerima struct {
+	ID   int64  `json:"id" db:"id"`
+	Name string `json:"name" db:"name"`
+}
+
+type ReadPenerima struct {
 	ID   int64  `json:"id" db:"id"`
 	Name string `json:"penerima" db:"penerima"`
 }
 
 type ListSurat struct {
 	SelectSurat
-	PenerimaSurat []Penerima `json:"penerima"`
+	PenerimaSurat []ListPenerima `json:"penerima"`
+}
+
+type ReadSurat struct {
+	SelectSurat
+	PenerimaSurat []ReadPenerima `json:"penerima"`
 }

@@ -18,7 +18,7 @@ func NewReadSurat() *Read {
 
 func (rd *Read) ReadSuratHandler(c echo.Context) (err error) {
 	var resp helper.Response
-	var surat *models.ListSurat
+	var surat *models.ReadSurat
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

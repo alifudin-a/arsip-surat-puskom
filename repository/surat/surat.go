@@ -11,7 +11,7 @@ import (
 
 type SuratRepository interface {
 	FindAll() ([]models.ListSurat, error)
-	FindById(arg ReadSuratParams) (*models.ListSurat, error)
+	FindById(arg ReadSuratParams) (*models.ReadSurat, error)
 	Delete(arg DeleteSuratParams) (err error)
 	IsExist(arg IsExistSuratParams) (bool, error)
 	Create(arg CreateSuratParams) (*models.Surat, error)
@@ -58,8 +58,8 @@ type ReadSuratParams struct {
 	ID int64
 }
 
-func (*repo) FindById(arg ReadSuratParams) (*models.ListSurat, error) {
-	var surat models.ListSurat
+func (*repo) FindById(arg ReadSuratParams) (*models.ReadSurat, error) {
+	var surat models.ReadSurat
 	var db = database.OpenDB()
 	var jsonString types.JSONText
 
@@ -131,7 +131,6 @@ func (*repo) IsExist(arg IsExistSuratParams) (bool, error) {
 type CreateSuratParams struct {
 	Tanggal    string
 	Nomor      string
-	IDPenerima int64
 	IDPengirim int64
 	Perihal    string
 	IDJenis    int64
@@ -147,7 +146,6 @@ func (*repo) Create(arg CreateSuratParams) (*models.Surat, error) {
 	err := tx.QueryRowx(query.CreateSurat,
 		arg.Tanggal,
 		arg.Nomor,
-		arg.IDPenerima,
 		arg.IDPengirim,
 		arg.Perihal,
 		arg.IDJenis,
@@ -172,7 +170,6 @@ type UpdateSuratParams struct {
 	ID         int64
 	Tanggal    string
 	Nomor      string
-	IDPenerima int64
 	IDPengirim int64
 	Perihal    string
 	IDJenis    int64
@@ -188,7 +185,6 @@ func (*repo) Update(arg UpdateSuratParams) (*models.Surat, error) {
 	err := tx.QueryRowx(query.UpdateSurat,
 		arg.Tanggal,
 		arg.Nomor,
-		arg.IDPenerima,
 		arg.IDPengirim,
 		arg.Perihal,
 		arg.IDJenis,
