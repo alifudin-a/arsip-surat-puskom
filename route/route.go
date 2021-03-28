@@ -83,6 +83,8 @@ func InitRoute() *echo.Echo {
 	api.POST("/surat", sCreate.CreateSuratHandler)
 	api.PUT("/surat", sUpdate.UpdateSuratHandler)
 
+	api.POST("/surat2", actionSurat.NewCreate2Surat().CreateSurat2Handler)
+
 	e.Logger.Fatal(e.Start(":9000"))
 
 	return e

@@ -15,6 +15,7 @@ type SuratRepository interface {
 	Delete(arg DeleteSuratParams) (err error)
 	IsExist(arg IsExistSuratParams) (bool, error)
 	Create(arg CreateSuratParams) (*models.Surat, error)
+	Create2(arg CreateSurat2Params) (*models.CreateSurat, error)
 	Update(arg UpdateSuratParams) (*models.Surat, error)
 }
 
@@ -125,6 +126,44 @@ func (*repo) IsExist(arg IsExistSuratParams) (bool, error) {
 	}
 
 	return true, nil
+}
+
+type CreateSurat2Params struct {
+	Tanggal    string
+	Nomor      string
+	IDPengirim int64
+	Perihal    string
+	IDJenis    int64
+	Keterangan string
+	CreatedAt  string
+	IDSurat    interface{}
+	IDPengguna int64
+	CreatedAt2 string
+}
+
+func (*repo) Create2(arg CreateSurat2Params) (*models.CreateSurat, error) {
+	var surat models.CreateSurat
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.CreateSurat2,
+		arg.Tanggal,
+		arg.Nomor,
+		arg.IDPengirim,
+		arg.Perihal,
+		arg.IDJenis,
+		arg.Keterangan,
+		arg.CreatedAt,
+		arg.IDSurat,
+		arg.IDPengguna,
+		arg.CreatedAt2,
+	).StructScan(&surat)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	return &surat, nil
 }
 
 // CreateSuratParams .

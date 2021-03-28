@@ -45,6 +45,30 @@ tbl_surat (
 	$1, $2, $3, $4, $5, $6, $7
 ) RETURNING *;`
 
+var CreateSurat2 = `
+WITH surat_baru AS (
+INSERT
+	INTO
+		tbl_surat ( 
+			tanggal,
+			nomor,
+			id_pengirim,
+			perihal,
+			id_jenis ,
+			keterangan ,
+			created_at 
+		)
+		VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING id 
+)
+INSERT 
+	INTO 
+		tbl_penerima (
+			id_surat, 
+			id_pengguna, 
+			created_at
+		) 
+		VALUES ( $8, $9, $10 ) RETURNING *;`
+
 var UpdateSurat = `
 UPDATE 
 	tbl_surat
