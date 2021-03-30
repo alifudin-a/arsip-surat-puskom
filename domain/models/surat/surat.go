@@ -29,12 +29,14 @@ type SelectSurat struct {
 }
 
 type Penerima struct {
+	ID         int64  `json:"id,omitempty" db:"id"`
 	IDSurat    int64  `json:"id_surat" db:"id_surat"`
 	IDPengguna int64  `json:"id_pengguna" db:"id_pengguna"`
 	CreatedAt2 string `json:"created_at" db:"created_at"`
+	UpdatedAt2 string `json:"updated_at,omitempty" db:"updated_at"`
 }
 
-type XCreateSurat struct {
+type CreateSuratPenerima struct {
 	Surat
 	Penerima []Penerima `json:"penerima"`
 }

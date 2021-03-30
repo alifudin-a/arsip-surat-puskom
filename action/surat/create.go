@@ -16,7 +16,7 @@ func NewCreateSurat() *Create {
 	return &Create{}
 }
 
-func (cr *Create) validate(req *models.XCreateSurat, c echo.Context) (err error) {
+func (cr *Create) validate(req *models.CreateSuratPenerima, c echo.Context) (err error) {
 	if err = c.Bind(req); err != nil {
 		return
 	}
@@ -26,7 +26,7 @@ func (cr *Create) validate(req *models.XCreateSurat, c echo.Context) (err error)
 
 func (cr *Create) CreateSuratHandler(c echo.Context) (err error) {
 	var resp helper.Response
-	var req = new(models.XCreateSurat)
+	var req = new(models.CreateSuratPenerima)
 
 	err = cr.validate(req, c)
 	if err != nil {
@@ -37,7 +37,7 @@ func (cr *Create) CreateSuratHandler(c echo.Context) (err error) {
 
 	repo := repository.NewSuratRepository()
 
-	var suratPenerima *models.XCreateSurat
+	var suratPenerima *models.CreateSuratPenerima
 
 	suratPenerima, err = repo.Create(arg)
 	if err != nil {

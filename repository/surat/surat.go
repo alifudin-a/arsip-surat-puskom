@@ -10,6 +10,7 @@ import (
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/query"
 	"github.com/jmoiron/sqlx/types"
+	errs "github.com/pkg/errors"
 )
 
 type SuratRepository interface {
@@ -17,8 +18,8 @@ type SuratRepository interface {
 	FindById(arg ReadSuratParams) (*models.ReadSurat, error)
 	Delete(arg DeleteSuratParams) (err error)
 	IsExist(arg IsExistSuratParams) (bool, error)
-	Create(arg CreateSurat) (*models.XCreateSurat, error)
-	Update(arg UpdateSuratParams) (*models.Surat, error)
+	Create(arg CreateSurat) (*models.CreateSuratPenerima, error)
+	Update(arg UpdateSuratParams) (*models.CreateSuratPenerima, error)
 }
 
 type repo struct{}
@@ -132,30 +133,46 @@ func (*repo) IsExist(arg IsExistSuratParams) (bool, error) {
 
 // UpdateSuratParams .
 type UpdateSuratParams struct {
-	ID         int64
-	Tanggal    string
-	Nomor      string
-	IDPengirim int64
-	Perihal    string
-	IDJenis    int64
-	Keterangan string
-	UpdatedAt  string
+	Surat    models.Surat
+	Penerima []models.Penerima
 }
 
-func (*repo) Update(arg UpdateSuratParams) (*models.Surat, error) {
+func (r *repo) Update(arg UpdateSuratParams) (*models.CreateSuratPenerima, error) {
+	var suratPenerima models.CreateSuratPenerima
+	var err error
+
+	var surat *models.Surat
+	surat, err = r.updateSurat(&arg)
+	if err != nil {
+		return nil, err
+	}
+	suratPenerima.Surat = *surat
+
+	var penerima []models.Penerima
+	penerima, err = r.updatePenerimaSurat(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	suratPenerima.Penerima = penerima
+
+	return &suratPenerima, nil
+}
+
+func (*repo) updateSurat(arg *UpdateSuratParams) (*models.Surat, error) {
 	var surat models.Surat
 	var db = database.OpenDB()
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.UpdateSurat,
-		arg.Tanggal,
-		arg.Nomor,
-		arg.IDPengirim,
-		arg.Perihal,
-		arg.IDJenis,
-		arg.Keterangan,
-		arg.UpdatedAt,
-		arg.ID,
+		arg.Surat.Tanggal,
+		arg.Surat.Nomor,
+		arg.Surat.IDPengirim,
+		arg.Surat.Perihal,
+		arg.Surat.IDJenis,
+		arg.Surat.Keterangan,
+		arg.Surat.UpdatedAt,
+		arg.Surat.ID,
 	).StructScan(&surat)
 	if err != nil {
 		tx.Rollback()
@@ -170,13 +187,60 @@ func (*repo) Update(arg UpdateSuratParams) (*models.Surat, error) {
 	return &surat, nil
 }
 
+func (*repo) updatePenerimaSurat(arg *UpdateSuratParams) ([]models.Penerima, error) {
+	var penerima []models.Penerima
+	var db = database.OpenDB()
+	var err error
+
+	_, err = db.Exec("DELETE FROM tbl_penerima WHERE id_surat = $1", arg.Surat.ID)
+	if err != nil {
+		return penerima, errs.Wrap(err, "Gagal mengubah penerima!")
+	}
+
+	q := query.UpdatePenerimaSurat
+
+	updateParams := []interface{}{}
+
+	for i, v := range arg.Penerima {
+		v.IDSurat = arg.Surat.ID
+		v.UpdatedAt2 = *arg.Surat.UpdatedAt
+
+		var s models.Penerima
+
+		s.IDSurat = v.IDSurat
+		s.IDPengguna = v.IDPengguna
+		s.UpdatedAt2 = v.UpdatedAt2
+
+		p1 := i * 3
+		q += fmt.Sprintf("($%d,$%d,$%d),", p1+1, p1+2, p1+3)
+		updateParams = append(updateParams, v.IDSurat, v.IDPengguna, v.UpdatedAt2)
+		penerima = append(penerima, s)
+	}
+
+	q = q[:len(q)-1]
+
+	tx := db.MustBegin()
+	_, err = tx.Exec(q, updateParams...)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return penerima, nil
+}
+
 type CreateSurat struct {
 	Surat    models.Surat
 	Penerima []models.Penerima
 }
 
-func (r *repo) Create(arg CreateSurat) (*models.XCreateSurat, error) {
-	var suratPenerima models.XCreateSurat
+func (r *repo) Create(arg CreateSurat) (*models.CreateSuratPenerima, error) {
+	var suratPenerima models.CreateSuratPenerima
 	var err error
 
 	var surat *models.Surat

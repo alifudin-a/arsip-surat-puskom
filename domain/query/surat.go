@@ -51,7 +51,17 @@ var CreatePenerimaSurat = `
 		tbl_penerima (
 			id_surat, id_pengguna, created_at
 		) 
-		VALUES`
+		VALUES
+	`
+
+var UpdatePenerimaSurat = `
+	INSERT
+		INTO
+		tbl_penerima (
+			id_surat, id_pengguna, updated_at
+		) 
+		VALUES
+	`
 
 var UpdateSurat = `
 UPDATE 

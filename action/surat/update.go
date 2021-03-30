@@ -16,7 +16,7 @@ func NewUpdateSurat() *Update {
 	return &Update{}
 }
 
-func (up *Update) validate(req *models.Surat, c echo.Context) (err error) {
+func (up *Update) validate(req *models.CreateSuratPenerima, c echo.Context) (err error) {
 	if err := c.Bind(req); err != nil {
 		return err
 	}
@@ -26,8 +26,8 @@ func (up *Update) validate(req *models.Surat, c echo.Context) (err error) {
 
 func (up *Update) UpdateSuratHandler(c echo.Context) (err error) {
 	var resp helper.Response
-	var surat *models.Surat
-	var req = new(models.Surat)
+	var surat *models.CreateSuratPenerima
+	var req = new(models.CreateSuratPenerima)
 
 	err = up.validate(req, c)
 	if err != nil {
@@ -38,18 +38,18 @@ func (up *Update) UpdateSuratHandler(c echo.Context) (err error) {
 
 	arg := builder.UpdateSurat(req)
 
-	exist, err := repo.IsExist(repository.IsExistSuratParams{
-		ID: arg.ID,
-	})
-	if !exist {
-		resp.Code = http.StatusBadRequest
-		resp.Message = "Data tidak ada!"
-		return c.JSON(http.StatusBadRequest, resp)
+	// exist, err := repo.IsExist(repository.IsExistSuratParams{
+	// 	ID: arg.ID,
+	// })
+	// if !exist {
+	// 	resp.Code = http.StatusBadRequest
+	// 	resp.Message = "Data tidak ada!"
+	// 	return c.JSON(http.StatusBadRequest, resp)
 
-	}
-	if err != nil {
-		return err
-	}
+	// }
+	// if err != nil {
+	// 	return err
+	// }
 
 	surat, err = repo.Update(arg)
 	if err != nil {
