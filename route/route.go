@@ -74,17 +74,13 @@ func InitRoute() *echo.Echo {
 	sList := actionSurat.NewListSurat()
 	sRead := actionSurat.NewReadSurat()
 	sDelete := actionSurat.NewDeleteSurat()
-	sCreate := actionSurat.NewCreateSurat()
 	sUpdate := actionSurat.NewUpdateSurat()
 
 	api.GET("/surat", sList.ListSuratHandler)
 	api.GET("/surat/:id", sRead.ReadSuratHandler)
 	api.DELETE("/surat/:id", sDelete.DeleteSuratHandler)
-	api.POST("/surat", sCreate.CreateSuratHandler)
 	api.PUT("/surat", sUpdate.UpdateSuratHandler)
-
-	api.POST("/surat2", actionSurat.NewCreate2Surat().CreateSurat2Handler)
-	api.POST("/xsurat", actionSurat.XNewCreate3Surat().CreateSurat3Handler)
+	api.POST("/surat", actionSurat.NewCreateSurat().CreateSuratHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 

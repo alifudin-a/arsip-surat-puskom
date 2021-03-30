@@ -8,43 +8,8 @@ import (
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/surat"
 )
 
-func CreateSurat(params *models.Surat) repository.CreateSuratParams {
-	var res repository.CreateSuratParams
-
-	t := time.Now()
-
-	res.Tanggal = params.Tanggal
-	res.Nomor = params.Nomor
-	res.IDPengirim = params.IDPengirim
-	res.Perihal = params.Perihal
-	res.IDJenis = *params.IDJenis
-	res.Keterangan = *params.Keterangan
-	res.CreatedAt = t.Format(helper.LayoutTime)
-
-	return res
-}
-
-func CreateSurat2(params *models.CreateSurat) repository.CreateSurat2Params {
-	var res repository.CreateSurat2Params
-
-	t := time.Now()
-
-	res.Tanggal = params.Tanggal
-	res.Nomor = params.Nomor
-	res.IDPengirim = params.IDPengirim
-	res.Perihal = params.Perihal
-	res.IDJenis = *params.IDJenis
-	res.Keterangan = *params.Keterangan
-	res.CreatedAt = t.Format(helper.LayoutTime)
-	res.IDSurat = params.IDSurat
-	res.IDPengguna = params.IDPengguna
-	res.CreatedAt2 = t.Format(helper.LayoutTime)
-
-	return res
-}
-
-func XCreateSurat(params *models.XCreateSurat) repository.CreateSuratPenerimaParams {
-	var res repository.CreateSuratPenerimaParams
+func CreateSurat(params *models.XCreateSurat) repository.CreateSurat {
+	var res repository.CreateSurat
 
 	t := time.Now()
 
