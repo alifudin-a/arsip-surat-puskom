@@ -1,6 +1,7 @@
 package builder
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
@@ -19,7 +20,7 @@ func CreateSurat(params *models.CreateSuratPenerima) repository.CreateSurat {
 	res.Surat.Perihal = params.Perihal
 	res.Surat.IDJenis = params.IDJenis
 	res.Surat.Keterangan = params.Keterangan
-	res.Surat.CreatedAt = t.Format(helper.LayoutTime)
+	res.Surat.CreatedAt = sql.NullString{t.Format(helper.LayoutTime), true}
 
 	res.Penerima = params.Penerima
 
@@ -38,7 +39,7 @@ func UpdateSurat(params *models.CreateSuratPenerima) repository.UpdateSuratParam
 	res.Surat.Perihal = params.Perihal
 	res.Surat.IDJenis = params.IDJenis
 	res.Surat.Keterangan = params.Keterangan
-	*res.Surat.UpdatedAt = t.Format(helper.LayoutTime)
+	res.Surat.UpdatedAt = sql.NullString{t.Format(helper.LayoutTime), true}
 
 	res.Penerima = params.Penerima
 

@@ -13,12 +13,18 @@ from (
 		ts.id_jenis,
 		tjs."name" as jenis,
 		ts.keterangan,
+		ts.created_at,
+		ts.updated_at,
 		(
 			select array_to_json(array_agg(row_to_json(d)))
 			from (
 				select 
 					tp.id as id,
-					tp3."name" as penerima
+					tp.id_pengguna,
+					tp3."name" as penerima,
+					tp.id_surat,
+					tp.created_at,
+					tp.updated_at
 				from tbl_penerima tp
 				join tbl_pengguna tp3 on tp3.id = tp.id_pengguna 
 				where tp.id_surat=ts.id
