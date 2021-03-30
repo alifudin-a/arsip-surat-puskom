@@ -64,7 +64,7 @@ var UpdatePenerimaSurat = `
 	INSERT
 		INTO
 		tbl_penerima (
-			id_surat, id_pengguna, updated_at
+			id_surat, id_pengguna, created_at, updated_at
 		) 
 		VALUES
 	`

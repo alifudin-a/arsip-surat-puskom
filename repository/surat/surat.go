@@ -198,23 +198,31 @@ func (*repo) updatePenerimaSurat(arg *UpdateSuratParams) ([]models.Penerima, err
 		return penerima, errs.Wrap(err, "Gagal mengubah penerima!")
 	}
 
+	var surat models.Surat
+	err = db.Get(&surat, "SELECT created_at FROM tbl_surat WHERE id = $1", arg.Surat.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	q := query.UpdatePenerimaSurat
 
 	updateParams := []interface{}{}
 
 	for i, v := range arg.Penerima {
 		v.IDSurat = arg.Surat.ID
+		v.CreatedAt2 = surat.CreatedAt
 		v.UpdatedAt2 = arg.Surat.UpdatedAt
 
 		var s models.Penerima
 
 		s.IDSurat = v.IDSurat
 		s.IDPengguna = v.IDPengguna
+		s.CreatedAt2 = v.CreatedAt2
 		s.UpdatedAt2 = v.UpdatedAt2
 
 		p1 := i * 3
-		q += fmt.Sprintf("($%d,$%d,$%d),", p1+1, p1+2, p1+3)
-		updateParams = append(updateParams, v.IDSurat, v.IDPengguna, v.UpdatedAt2)
+		q += fmt.Sprintf("($%d,$%d,$%d,$%d),", p1+1, p1+2, p1+3, p1+4)
+		updateParams = append(updateParams, v.IDSurat, v.IDPengguna, v.CreatedAt2, v.UpdatedAt2)
 		penerima = append(penerima, s)
 	}
 
