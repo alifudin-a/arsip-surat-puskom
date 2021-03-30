@@ -203,7 +203,7 @@ func (r *repo) createSurat(arg *CreateSurat) (*models.Surat, error) {
 	var db = database.OpenDB()
 
 	tx := db.MustBegin()
-	err := tx.QueryRowx(query.XCreateSurat,
+	err := tx.QueryRowx(query.CreateSurat,
 		arg.Surat.Tanggal,
 		arg.Surat.Nomor,
 		arg.Surat.IDPengirim,
@@ -230,7 +230,7 @@ func (r *repo) createPenerima(arg *CreateSurat) ([]models.Penerima, error) {
 	var suratPenerima []models.Penerima
 	var db = database.OpenDB()
 
-	q := query.XCreatePenerima
+	q := query.CreatePenerimaSurat
 	t := time.Now()
 
 	insertParams := []interface{}{}

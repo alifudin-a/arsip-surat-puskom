@@ -32,44 +32,6 @@ from (
 var DeleteSurat = `DELETE FROM tbl_surat WHERE id = $1;`
 
 var CreateSurat = `
-INSERT INTO
-tbl_surat (
-	tanggal,
-	nomor,
-	id_pengirim,
-	perihal,
-	id_jenis,
-	keterangan,
-	created_at
-) VALUES (
-	$1, $2, $3, $4, $5, $6, $7
-) RETURNING *;`
-
-var CreateSurat2 = `
-WITH surat_baru AS (
-INSERT
-	INTO
-		tbl_surat ( 
-			tanggal,
-			nomor,
-			id_pengirim,
-			perihal,
-			id_jenis ,
-			keterangan ,
-			created_at 
-		)
-		VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING id 
-)
-INSERT 
-INTO 
-	tbl_penerima (
-		id_surat, 
-		id_pengguna, 
-		created_at
-	) 
-	VALUES ( $8, $9, $10 ) RETURNING id;
-`
-var XCreateSurat = `
 	INSERT
 		INTO
 		tbl_surat ( 
@@ -83,14 +45,7 @@ var XCreateSurat = `
 		)
 		VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING *;`
 
-var XSelectSurat = `
-	SELECT
-		id
-	FROM
-		tbl_surat
-	ORDER BY id DESC LIMIT 1;`
-
-var XCreatePenerima = `
+var CreatePenerimaSurat = `
 	INSERT
 		INTO
 		tbl_penerima (
