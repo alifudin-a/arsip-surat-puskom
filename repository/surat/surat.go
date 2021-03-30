@@ -2,6 +2,7 @@ package repository
 
 import (
 	"encoding/json"
+	"fmt"
 
 	database "github.com/alifudin-a/arsip-surat-puskom/database/psql"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat"
@@ -17,6 +18,7 @@ type SuratRepository interface {
 	Create(arg CreateSuratParams) (*models.Surat, error)
 	Create2(arg CreateSurat2Params) (*models.CreateSurat, error)
 	Update(arg UpdateSuratParams) (*models.Surat, error)
+	BuatSurat(arg BuatSuratParams) (*models.BuatSurat, error)
 }
 
 type repo struct{}
@@ -164,6 +166,102 @@ func (*repo) Create2(arg CreateSurat2Params) (*models.CreateSurat, error) {
 	}
 
 	return &surat, nil
+}
+
+type BuatSuratParams struct {
+	Surat    models.Surat3
+	Penerima []models.Penerima
+}
+
+func (r *repo) BuatSurat(arg BuatSuratParams) (*models.BuatSurat, error) {
+
+	var buatSurat models.BuatSurat
+
+	var surat *models.Surat3
+	surat, err := r.createSurat(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	buatSurat.Surat3 = *surat
+	arg.Surat.ID = surat.ID
+
+	var penerima []models.Penerima
+	penerima, err = r.createPenerima(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	buatSurat.Penerima = penerima
+
+	return &buatSurat, nil
+}
+
+func (*repo) createSurat(arg *BuatSuratParams) (*models.Surat3, error) {
+	var surat models.Surat3
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.CreateSurat,
+		arg.Surat.Tanggal,
+		arg.Surat.Nomor,
+		arg.Surat.IDPengirim,
+		arg.Surat.Perihal,
+		arg.Surat.IDJenis,
+		arg.Surat.Keterangan,
+		arg.Surat.CreatedAt,
+	).StructScan(&surat)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &surat, nil
+}
+
+func (*repo) createPenerima(arg *BuatSuratParams) ([]models.Penerima, error) {
+	var penerima []models.Penerima
+	var db = database.OpenDB()
+
+	q := query.CreatePenerima
+
+	insertParams := []interface{}{}
+
+	for i, v := range arg.Penerima {
+		v.IDSurat = arg.Surat.ID
+
+		var p models.Penerima
+
+		p.IDSurat = v.IDSurat
+		p.IDPengguna = v.IDPengguna
+		p.CreatedAt = v.CreatedAt
+
+		p1 := i * 3
+		q += fmt.Sprintf("($%d,$%d,$%d),", p1+1, p1+2, p1+3)
+		insertParams = append(insertParams, v.IDSurat, v.IDPengguna, v.CreatedAt)
+		penerima = append(penerima, p)
+	}
+
+	q = q[:len(q)-1]
+
+	tx := db.MustBegin()
+	_, err := tx.Exec(q, insertParams...)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return penerima, nil
 }
 
 // CreateSuratParams .

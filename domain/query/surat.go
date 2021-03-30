@@ -67,7 +67,7 @@ INSERT
 			id_pengguna, 
 			created_at
 		) 
-		VALUES ( $8, $9, $10 ) RETURNING *;`
+		VALUES ( (select id from surat_baru), $8, $9 ) RETURNING *;`
 
 var UpdateSurat = `
 UPDATE 

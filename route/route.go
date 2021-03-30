@@ -6,6 +6,7 @@ import (
 	actionJenisSurat "github.com/alifudin-a/arsip-surat-puskom/action/jenis-surat"
 	actionLogin "github.com/alifudin-a/arsip-surat-puskom/action/login"
 	actionPenerima "github.com/alifudin-a/arsip-surat-puskom/action/penerima"
+	action "github.com/alifudin-a/arsip-surat-puskom/action/surat"
 	actionSurat "github.com/alifudin-a/arsip-surat-puskom/action/surat"
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
@@ -84,6 +85,7 @@ func InitRoute() *echo.Echo {
 	api.PUT("/surat", sUpdate.UpdateSuratHandler)
 
 	api.POST("/surat2", actionSurat.NewCreate2Surat().CreateSurat2Handler)
+	api.POST("/surat3", action.NewCreate3Surat().CreateSurat3Handler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
