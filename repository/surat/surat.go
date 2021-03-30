@@ -3,8 +3,11 @@ package repository
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"time"
 
 	database "github.com/alifudin-a/arsip-surat-puskom/database/psql"
+	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/query"
 	"github.com/jmoiron/sqlx/types"
@@ -17,8 +20,9 @@ type SuratRepository interface {
 	IsExist(arg IsExistSuratParams) (bool, error)
 	Create(arg CreateSuratParams) (*models.Surat, error)
 	Create2(arg CreateSurat2Params) (*models.CreateSurat, error)
+	Save(arg CreateSuratPenerimaParams) (*models.XCreateSurat, error)
 	Update(arg UpdateSuratParams) (*models.Surat, error)
-	BuatSurat(arg BuatSuratParams) (*models.BuatSurat, error)
+	// XCreateSuratPenerima(arg XCreateSuratParams) (*models.XCreateSurat, error)
 }
 
 type repo struct{}
@@ -26,6 +30,78 @@ type repo struct{}
 func NewSuratRepository() SuratRepository {
 	return &repo{}
 }
+
+type XCreateSuratParams struct {
+	Surat    models.Surat3
+	Penerima models.Penerima
+}
+
+// func (r *repo) XCreateSuratPenerima(arg XCreateSuratParams) (*models.XCreateSurat, error) {
+// 	var suratPenerima models.XCreateSurat
+// 	var err error
+
+// 	var surat *models.Surat3
+// 	surat, err = r.createSurat(&arg)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	suratPenerima.Surat3 = *surat
+
+// 	var penerima *models.Penerima
+// 	penerima, err = r.createPenerima(&arg)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	suratPenerima.Penerima = *penerima
+
+// 	return &suratPenerima, nil
+// }
+
+// func (r *repo) createSurat(arg *XCreateSuratParams) (*models.Surat3, error) {
+// 	var surat models.Surat3
+// 	var db = database.OpenDB()
+
+// 	tx := db.MustBegin()
+// 	err := tx.QueryRowx(query.XCreateSurat,
+// 		arg.Surat.Tanggal,
+// 		arg.Surat.Nomor,
+// 		arg.Surat.IDPengirim,
+// 		arg.Surat.Perihal,
+// 		arg.Surat.IDJenis,
+// 		arg.Surat.Keterangan,
+// 		arg.Surat.CreatedAt,
+// 	).StructScan(&surat)
+// 	if err != nil {
+// 		tx.Rollback()
+// 		return nil, err
+// 	}
+
+// 	err = tx.Commit()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	return &surat, nil
+// }
+
+// func (r *repo) createPenerima(arg *XCreateSuratParams) (*models.Penerima, error) {
+// 	var surat models.Surat3
+// 	var penerima models.Penerima
+// 	var db = database.OpenDB()
+
+// 	_ = db.Get(&surat, query.XSelectSurat)
+
+// 	arg.Penerima.IDSurat = surat.ID
+// 	fmt.Println(arg.Penerima.IDSurat)
+
+// 	tx := db.MustBegin()
+// 	err := tx.QueryRowx(query.XCreatePenerima, arg.Penerima.IDSurat, arg.Penerima.IDPengguna, arg.Penerima.CreatedAt2)
+// 	if err != nil {
+// 		return nil, err.Err()
+// 	}
+
+// 	return &penerima, nil
+// }
 
 func (*repo) FindAll() ([]models.ListSurat, error) {
 	var surat []models.ListSurat
@@ -138,7 +214,7 @@ type CreateSurat2Params struct {
 	IDJenis    int64
 	Keterangan string
 	CreatedAt  string
-	IDSurat    interface{}
+	IDSurat    int64
 	IDPengguna int64
 	CreatedAt2 string
 }
@@ -164,104 +240,15 @@ func (*repo) Create2(arg CreateSurat2Params) (*models.CreateSurat, error) {
 		tx.Rollback()
 		return nil, err
 	}
-
-	return &surat, nil
-}
-
-type BuatSuratParams struct {
-	Surat    models.Surat3
-	Penerima []models.Penerima
-}
-
-func (r *repo) BuatSurat(arg BuatSuratParams) (*models.BuatSurat, error) {
-
-	var buatSurat models.BuatSurat
-
-	var surat *models.Surat3
-	surat, err := r.createSurat(&arg)
-	if err != nil {
-		return nil, err
-	}
-
-	buatSurat.Surat3 = *surat
-	arg.Surat.ID = surat.ID
-
-	var penerima []models.Penerima
-	penerima, err = r.createPenerima(&arg)
-	if err != nil {
-		return nil, err
-	}
-
-	buatSurat.Penerima = penerima
-
-	return &buatSurat, nil
-}
-
-func (*repo) createSurat(arg *BuatSuratParams) (*models.Surat3, error) {
-	var surat models.Surat3
-	var db = database.OpenDB()
-
-	tx := db.MustBegin()
-	err := tx.QueryRowx(query.CreateSurat,
-		arg.Surat.Tanggal,
-		arg.Surat.Nomor,
-		arg.Surat.IDPengirim,
-		arg.Surat.Perihal,
-		arg.Surat.IDJenis,
-		arg.Surat.Keterangan,
-		arg.Surat.CreatedAt,
-	).StructScan(&surat)
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
 	err = tx.Commit()
 	if err != nil {
 		return nil, err
 	}
 
+	arg.IDSurat = surat.ID
+	log.Println(arg.IDSurat)
+
 	return &surat, nil
-}
-
-func (*repo) createPenerima(arg *BuatSuratParams) ([]models.Penerima, error) {
-	var penerima []models.Penerima
-	var db = database.OpenDB()
-
-	q := query.CreatePenerima
-
-	insertParams := []interface{}{}
-
-	for i, v := range arg.Penerima {
-		v.IDSurat = arg.Surat.ID
-
-		var p models.Penerima
-
-		p.IDSurat = v.IDSurat
-		p.IDPengguna = v.IDPengguna
-		p.CreatedAt = v.CreatedAt
-
-		p1 := i * 3
-		q += fmt.Sprintf("($%d,$%d,$%d),", p1+1, p1+2, p1+3)
-		insertParams = append(insertParams, v.IDSurat, v.IDPengguna, v.CreatedAt)
-		penerima = append(penerima, p)
-	}
-
-	q = q[:len(q)-1]
-
-	tx := db.MustBegin()
-	_, err := tx.Exec(q, insertParams...)
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return nil, err
-	}
-
-	return penerima, nil
 }
 
 // CreateSuratParams .
@@ -340,4 +327,102 @@ func (*repo) Update(arg UpdateSuratParams) (*models.Surat, error) {
 	}
 
 	return &surat, nil
+}
+
+type CreateSuratPenerimaParams struct {
+	Surat    models.Surat3
+	Penerima []models.Penerima
+}
+
+func (r *repo) Save(arg CreateSuratPenerimaParams) (*models.XCreateSurat, error) {
+	var suratPenerima models.XCreateSurat
+	var err error
+
+	var surat *models.Surat3
+	surat, err = r.createSurat(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	suratPenerima.Surat3 = *surat
+	arg.Surat.ID = surat.ID
+
+	var penerima []models.Penerima
+	penerima, err = r.createPenerima(&arg)
+	if err != nil {
+		return nil, err
+	}
+	suratPenerima.Penerima = penerima
+
+	return &suratPenerima, nil
+}
+
+func (r *repo) createSurat(arg *CreateSuratPenerimaParams) (*models.Surat3, error) {
+	var surat models.Surat3
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.XCreateSurat,
+		arg.Surat.Tanggal,
+		arg.Surat.Nomor,
+		arg.Surat.IDPengirim,
+		arg.Surat.Perihal,
+		arg.Surat.IDJenis,
+		arg.Surat.Keterangan,
+		arg.Surat.CreatedAt,
+	).StructScan(&surat)
+
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &surat, nil
+}
+
+func (r *repo) createPenerima(arg *CreateSuratPenerimaParams) ([]models.Penerima, error) {
+	var suratPenerima []models.Penerima
+	var db = database.OpenDB()
+
+	q := query.XCreatePenerima
+	t := time.Now()
+
+	insertParams := []interface{}{}
+
+	for i, v := range arg.Penerima {
+		v.IDSurat = arg.Surat.ID
+		v.CreatedAt2 = t.Format(helper.LayoutTime)
+
+		var s models.Penerima
+
+		s.IDSurat = v.IDSurat
+		s.IDPengguna = v.IDPengguna
+		s.CreatedAt2 = v.CreatedAt2
+
+		p1 := i * 3
+		q += fmt.Sprintf("($%d,$%d,$%d),", p1+1, p1+2, p1+3)
+		insertParams = append(insertParams, v.IDSurat, v.IDPengguna, v.CreatedAt2)
+		suratPenerima = append(suratPenerima, s)
+	}
+
+	q = q[:len(q)-1]
+
+	tx := db.MustBegin()
+	_, err := tx.Exec(q, insertParams...)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return suratPenerima, err
 }

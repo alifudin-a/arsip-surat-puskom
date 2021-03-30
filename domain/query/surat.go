@@ -61,13 +61,42 @@ INSERT
 		VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING id 
 )
 INSERT 
-	INTO 
+INTO 
+	tbl_penerima (
+		id_surat, 
+		id_pengguna, 
+		created_at
+	) 
+	VALUES ( $8, $9, $10 ) RETURNING id;
+`
+var XCreateSurat = `
+	INSERT
+		INTO
+		tbl_surat ( 
+			tanggal,
+			nomor,
+			id_pengirim,
+			perihal,
+			id_jenis ,
+			keterangan ,
+			created_at 
+		)
+		VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING *;`
+
+var XSelectSurat = `
+	SELECT
+		id
+	FROM
+		tbl_surat
+	ORDER BY id DESC LIMIT 1;`
+
+var XCreatePenerima = `
+	INSERT
+		INTO
 		tbl_penerima (
-			id_surat, 
-			id_pengguna, 
-			created_at
+			id_surat, id_pengguna, created_at
 		) 
-		VALUES ( (select id from surat_baru), $8, $9 ) RETURNING *;`
+		VALUES`
 
 var UpdateSurat = `
 UPDATE 

@@ -10,43 +10,44 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type Create3 struct{}
+type XCreate struct{}
 
-func NewCreate3Surat() *Create3 {
-	return &Create3{}
+func XNewCreate3Surat() *XCreate {
+	return &XCreate{}
 }
 
-func (cr *Create3) validate(req *models.BuatSurat, c echo.Context) (err error) {
-	if err := c.Bind(req); err != nil {
-		return err
+func (cr *XCreate) validate(req *models.XCreateSurat, c echo.Context) (err error) {
+	if err = c.Bind(req); err != nil {
+		return
 	}
 
 	return c.Validate(req)
 }
 
-func (cr *Create3) CreateSurat3Handler(c echo.Context) (err error) {
+func (cr *XCreate) CreateSurat3Handler(c echo.Context) (err error) {
 	var resp helper.Response
-	var surat *models.BuatSurat
-	var req = new(models.BuatSurat)
+	var req = new(models.XCreateSurat)
 
 	err = cr.validate(req, c)
 	if err != nil {
-		return err
+		return
 	}
+
+	arg := builder.XCreateSurat(req)
 
 	repo := repository.NewSuratRepository()
 
-	arg := builder.CreateSurat3(req)
+	var suratPenerima *models.XCreateSurat
 
-	surat, err = repo.BuatSurat(arg)
+	suratPenerima, err = repo.Save(arg)
 	if err != nil {
-		return err
+		return
 	}
 
 	resp.Code = http.StatusCreated
 	resp.Message = "Berhasil menambahkan surat!"
 	resp.Body = map[string]interface{}{
-		"surat": surat,
+		"surat": suratPenerima,
 	}
 
 	return c.JSON(http.StatusOK, resp)

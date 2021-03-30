@@ -43,22 +43,22 @@ func CreateSurat2(params *models.CreateSurat) repository.CreateSurat2Params {
 	return res
 }
 
-func CreateSurat3(params *models.BuatSurat) repository.BuatSuratParams {
-	var result repository.BuatSuratParams
+func XCreateSurat(params *models.XCreateSurat) repository.CreateSuratPenerimaParams {
+	var res repository.CreateSuratPenerimaParams
 
 	t := time.Now()
 
-	result.Surat.Tanggal = params.Tanggal
-	result.Surat.Nomor = params.Nomor
-	result.Surat.IDPengirim = params.IDPengirim
-	result.Surat.Perihal = params.Perihal
-	result.Surat.IDJenis = params.IDJenis
-	result.Surat.Keterangan = params.Keterangan
-	result.Surat.CreatedAt = t.Format(helper.LayoutTime)
+	res.Surat.Tanggal = params.Tanggal
+	res.Surat.Nomor = params.Nomor
+	res.Surat.IDPengirim = params.IDPengirim
+	res.Surat.Perihal = params.Perihal
+	res.Surat.IDJenis = params.IDJenis
+	res.Surat.Keterangan = params.Keterangan
+	res.Surat.CreatedAt = t.Format(helper.LayoutTime)
 
-	result.Penerima = params.Penerima
+	res.Penerima = params.Penerima
 
-	return result
+	return res
 }
 
 func UpdateSurat(params *models.Surat) repository.UpdateSuratParams {
