@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -310,7 +309,7 @@ func (r *repo) createPenerima(arg *CreateSurat) ([]models.Penerima, error) {
 
 	for i, v := range arg.Penerima {
 		v.IDSurat = arg.Surat.ID
-		v.CreatedAt2 = sql.NullString{t.Format(helper.LayoutTime), true}
+		v.CreatedAt2 = helper.NullString(t.Format(helper.LayoutTime))
 
 		var s models.Penerima
 
