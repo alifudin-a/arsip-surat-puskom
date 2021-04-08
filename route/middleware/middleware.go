@@ -30,7 +30,7 @@ func Validation() echo.MiddlewareFunc {
 }
 
 func ValidationKey(c echo.Context) (err error) {
-	key := c.Request().Header.Get("api-key")
+	key := c.Request().Header.Get("app-key")
 	if key != os.Getenv("ASU-API-KEY") {
 		return status.Errorf(
 			codes.InvalidAPIKey,
