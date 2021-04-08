@@ -61,7 +61,7 @@ func (lg *Login) LoginHandler(c echo.Context) (err error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = &LoginTokenClaim{
 		&jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Second * 60).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 		},
 		models.Login{
 			ID:         login.ID,
