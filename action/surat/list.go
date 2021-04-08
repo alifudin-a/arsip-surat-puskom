@@ -21,10 +21,10 @@ func (ls *List) ListSuratHandler(c echo.Context) (err error) {
 	var resp helper.Response
 	var surat []models.ListSurat
 
-	err = mid.ValidationKey(c)
-	if err != nil {
-		return
-	}
+	// err = mid.ValidationKey(c)
+	// if err != nil {
+	// 	return
+	// }
 
 	err = mid.ValidationJWT(c)
 	if err != nil {

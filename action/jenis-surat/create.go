@@ -33,10 +33,10 @@ func (cr *Create) CreateJenisSuratHandler(c echo.Context) (err error) {
 	var jenis *models.JenisSurat
 	var t = time.Now()
 
-	err = mid.ValidationKey(c)
-	if err != nil {
-		return
-	}
+	// err = mid.ValidationKey(c)
+	// if err != nil {
+	// 	return
+	// }
 
 	err = mid.ValidationJWT(c)
 	if err != nil {

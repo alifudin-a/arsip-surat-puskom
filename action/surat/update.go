@@ -30,10 +30,10 @@ func (up *Update) UpdateSuratHandler(c echo.Context) (err error) {
 	var surat *models.CreateSuratPenerima
 	var req = new(models.CreateSuratPenerima)
 
-	err = mid.ValidationKey(c)
-	if err != nil {
-		return
-	}
+	// err = mid.ValidationKey(c)
+	// if err != nil {
+	// 	return
+	// }
 
 	err = mid.ValidationJWT(c)
 	if err != nil {

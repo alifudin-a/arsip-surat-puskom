@@ -32,10 +32,10 @@ func (cr *Create) CreatePenerimaHandler(c echo.Context) (err error) {
 	var req = new(models.Penerima)
 	var penerima *models.Penerima
 
-	err = mid.ValidationKey(c)
-	if err != nil {
-		return
-	}
+	// err = mid.ValidationKey(c)
+	// if err != nil {
+	// 	return
+	// }
 
 	err = mid.ValidationJWT(c)
 	if err != nil {

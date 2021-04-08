@@ -9,6 +9,7 @@ import (
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/login"
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/login"
+	mid "github.com/alifudin-a/arsip-surat-puskom/route/middleware"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 )
@@ -28,7 +29,11 @@ func (lg *Login) LoginHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
 	var login *models.Login
-	// expires :=
+
+	err = mid.ValidationKey(c)
+	if err != nil {
+		return
+	}
 
 	if err = c.Bind(&login); err != nil {
 		return

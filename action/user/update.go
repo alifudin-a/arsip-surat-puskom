@@ -33,10 +33,10 @@ func (up *Update) UpdateUserHandler(c echo.Context) (err error) {
 	var user *models.User
 	var t = time.Now()
 
-	err = mid.ValidationKey(c)
-	if err != nil {
-		return
-	}
+	// err = mid.ValidationKey(c)
+	// if err != nil {
+	// 	return
+	// }
 
 	err = mid.ValidationJWT(c)
 	if err != nil {

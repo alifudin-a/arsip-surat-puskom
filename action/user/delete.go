@@ -19,10 +19,10 @@ func NewDeleteUser() *Delete {
 func (dl *Delete) DeleteUserHandler(c echo.Context) (err error) {
 	var resp helper.Response
 
-	err = mid.ValidationKey(c)
-	if err != nil {
-		return
-	}
+	// err = mid.ValidationKey(c)
+	// if err != nil {
+	// 	return
+	// }
 
 	err = mid.ValidationJWT(c)
 	if err != nil {
