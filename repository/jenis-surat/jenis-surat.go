@@ -101,7 +101,6 @@ func (*repo) IsExist(arg IsExistJenisSuratParams) (bool, error) {
 
 // CreateUserParams .
 type CreateJenisSuratParams struct {
-	Kode      int64
 	Name      string
 	CreatedAt string
 }
@@ -111,7 +110,7 @@ func (*repo) Create(arg CreateJenisSuratParams) (*models.JenisSurat, error) {
 	var db = database.OpenDB()
 
 	tx := db.MustBegin()
-	err := tx.QueryRowx(query.CreateJenisSurat, arg.Kode, arg.Name, arg.CreatedAt).StructScan(&jenis)
+	err := tx.QueryRowx(query.CreateJenisSurat, arg.Name, arg.CreatedAt).StructScan(&jenis)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -128,7 +127,6 @@ func (*repo) Create(arg CreateJenisSuratParams) (*models.JenisSurat, error) {
 // UpdateUserParams .
 type UpdateJenisSuratParams struct {
 	Name      string
-	Kode      int64
 	UpdatedAt string
 	ID        int64
 }
@@ -138,7 +136,7 @@ func (*repo) Update(arg UpdateJenisSuratParams) (*models.JenisSurat, error) {
 	var db = database.OpenDB()
 
 	tx := db.MustBegin()
-	err := tx.QueryRowx(query.UpdateJenisSurat, arg.Kode, arg.Name, arg.UpdatedAt, arg.ID).StructScan(&jenis)
+	err := tx.QueryRowx(query.UpdateJenisSurat, arg.Name, arg.UpdatedAt, arg.ID).StructScan(&jenis)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
