@@ -7,6 +7,7 @@ import (
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/jenis-surat"
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/jenis-surat"
+	mid "github.com/alifudin-a/arsip-surat-puskom/route/middleware"
 	"github.com/labstack/echo/v4"
 )
 
@@ -31,6 +32,16 @@ func (up *Update) UpdateUserHandler(c echo.Context) (err error) {
 	var req = new(models.JenisSurat)
 	var jenis *models.JenisSurat
 	var t = time.Now()
+
+	err = mid.ValidationKey(c)
+	if err != nil {
+		return
+	}
+
+	err = mid.ValidationJWT(c)
+	if err != nil {
+		return
+	}
 
 	err = up.validate(req, c)
 	if err != nil {

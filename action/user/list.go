@@ -6,6 +6,7 @@ import (
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/user"
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/user"
+	mid "github.com/alifudin-a/arsip-surat-puskom/route/middleware"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,6 +20,16 @@ func (ls *List) ListUserHandler(c echo.Context) (err error) {
 
 	var user []models.User
 	var resp helper.Response
+
+	err = mid.ValidationKey(c)
+	if err != nil {
+		return
+	}
+
+	err = mid.ValidationJWT(c)
+	if err != nil {
+		return
+	}
 
 	repo := repository.NewUserRepository()
 

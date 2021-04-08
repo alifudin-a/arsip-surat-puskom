@@ -7,6 +7,7 @@ import (
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/user"
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/user"
+	mid "github.com/alifudin-a/arsip-surat-puskom/route/middleware"
 	"github.com/labstack/echo/v4"
 )
 
@@ -31,6 +32,16 @@ func (cr *Create) CreateUserHandler(c echo.Context) (err error) {
 	var req = new(models.User)
 	var user *models.User
 	var t = time.Now()
+
+	err = mid.ValidationKey(c)
+	if err != nil {
+		return
+	}
+
+	err = mid.ValidationJWT(c)
+	if err != nil {
+		return
+	}
 
 	err = cr.validate(req, c)
 	if err != nil {

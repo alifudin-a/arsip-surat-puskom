@@ -7,6 +7,7 @@ import (
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/penerima"
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/penerima"
+	mid "github.com/alifudin-a/arsip-surat-puskom/route/middleware"
 	"github.com/labstack/echo/v4"
 )
 
@@ -18,6 +19,16 @@ func NewReadPenerima() *Read {
 
 func (rd *Read) ReadPenerimaHandler(c echo.Context) (err error) {
 	var resp helper.Response
+
+	err = mid.ValidationKey(c)
+	if err != nil {
+		return
+	}
+
+	err = mid.ValidationJWT(c)
+	if err != nil {
+		return
+	}
 
 	var penerima = &models.Penerima{}
 

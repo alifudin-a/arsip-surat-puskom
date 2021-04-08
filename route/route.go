@@ -16,70 +16,66 @@ import (
 
 func InitRoute() *echo.Echo {
 	e := echo.New()
+
+	// validator json body
 	e.Validator = &helper.CustomValidator{Validator: validator.New()}
 	e.HTTPErrorHandler = helper.CustomReadableError
 
+	// middlewares
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
 		Format: "==> METHOD=${method}, URI=${uri}, STATUS=${status}, " +
 			"HOST=${host}, ERROR=${error}, LATENCY_HUMAN=${latency_human}\n",
 	}))
 	e.Use(middleware.Recover())
+	e.Use(middleware.Gzip())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
-		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, echo.HeaderContentLength, echo.HeaderAcceptEncoding, echo.HeaderAccessControlAllowOrigin,
+			echo.HeaderAccessControlAllowHeaders, echo.HeaderContentDisposition, "api-key", "user-token"},
+		ExposeHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, echo.HeaderContentLength, echo.HeaderAcceptEncoding, echo.HeaderAccessControlAllowOrigin,
+			echo.HeaderAccessControlAllowHeaders, echo.HeaderContentDisposition, "api-key", "user-token"},
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
 
+	// middleware validasi token jwt
+	// e.Use(validation.Validation())
+
+	// e.POST("/login", actionLogin.NewLoginHandler().LoginHandler)
+
+	// endpoint group
 	api := e.Group("/api")
 
-	usrCreate := actionUser.NewCreateUser()
-	usrDelete := actionUser.NewDeleteUser()
-	usrList := actionUser.NewListUser()
-	usrRead := actionUser.NewReadUser()
-	usrUpdate := actionUser.NewUpdateUser()
+	// api.Use(validation.Validation())
 
-	api.GET("/user", usrList.ListUserHandler)
-	api.GET("/user/:id", usrRead.ReadUserHandler)
-	api.DELETE("/user/:id", usrDelete.DeleteUserHandler)
-	api.POST("/user", usrCreate.CreateUserHandler)
-	api.PUT("/user", usrUpdate.UpdateUserHandler)
+	// endpoint user / pengguna
+	api.GET("/user", actionUser.NewListUser().ListUserHandler)
+	api.GET("/user/:id", actionUser.NewReadUser().ReadUserHandler)
+	api.DELETE("/user/:id", actionUser.NewDeleteUser().DeleteUserHandler)
+	api.POST("/user", actionUser.NewCreateUser().CreateUserHandler)
+	api.PUT("/user", actionUser.NewUpdateUser().UpdateUserHandler)
 
-	jsCreate := actionJenisSurat.NewCreateJenisSurat()
-	jsDelete := actionJenisSurat.NewDeleteJenisSurat()
-	jsList := actionJenisSurat.NewListJenisSurat()
-	jsRead := actionJenisSurat.NewReadJenisSurat()
-	jsUpdate := actionJenisSurat.NewUpdateJenisSurat()
+	// endpoint jenis_surat
+	api.GET("/jenis_surat", actionJenisSurat.NewListJenisSurat().ListJenisSuratHandler)
+	api.GET("/jenis_surat/:id", actionJenisSurat.NewReadJenisSurat().ReadJenisSuratHandler)
+	api.DELETE("/jenis_surat/:id", actionJenisSurat.NewDeleteJenisSurat().DeleteJenisSuratHandler)
+	api.POST("/jenis_surat", actionJenisSurat.NewCreateJenisSurat().CreateJenisSuratHandler)
+	api.PUT("/jenis_surat", actionJenisSurat.NewUpdateJenisSurat().UpdateUserHandler)
 
-	api.GET("/jenis_surat", jsList.ListJenisSuratHandler)
-	api.GET("/jenis_surat/:id", jsRead.ReadJenisSuratHandler)
-	api.DELETE("/jenis_surat/:id", jsDelete.DeleteJenisSuratHandler)
-	api.POST("/jenis_surat", jsCreate.CreateJenisSuratHandler)
-	api.PUT("/jenis_surat", jsUpdate.UpdateUserHandler)
+	// endpoint login
+	api.POST("/login", actionLogin.NewLoginHandler().LoginHandler)
 
-	login := actionLogin.NewLoginHandler()
-	api.POST("/login", login.LoginHandler)
+	// endpoint penerima
+	api.GET("/penerima", actionPenerima.NewListPenerima().ListPenerimaHandler)
+	api.GET("/penerima/:id", actionPenerima.NewReadPenerima().ReadPenerimaHandler)
+	api.DELETE("/penerima/:id", actionPenerima.NewDeletePenerima().DeletePenerimaHandler)
+	api.POST("/penerima", actionPenerima.NewCreatePenerima().CreatePenerimaHandler)
+	api.PUT("/penerima", actionPenerima.NewUpdatePenerima().UpdatePenerimaHandler)
 
-	pList := actionPenerima.NewListPenerima()
-	pRead := actionPenerima.NewReadPenerima()
-	pDelete := actionPenerima.NewDeletePenerima()
-	pCreate := actionPenerima.NewCreatePenerima()
-	pUpdate := actionPenerima.NewUpdatePenerima()
-
-	api.GET("/penerima", pList.ListPenerimaHandler)
-	api.GET("/penerima/:id", pRead.ReadPenerimaHandler)
-	api.DELETE("/penerima/:id", pDelete.DeletePenerimaHandler)
-	api.POST("/penerima", pCreate.CreatePenerimaHandler)
-	api.PUT("/penerima", pUpdate.UpdatePenerimaHandler)
-
-	sList := actionSurat.NewListSurat()
-	sRead := actionSurat.NewReadSurat()
-	sDelete := actionSurat.NewDeleteSurat()
-	sUpdate := actionSurat.NewUpdateSurat()
-
-	api.GET("/surat", sList.ListSuratHandler)
-	api.GET("/surat/:id", sRead.ReadSuratHandler)
-	api.DELETE("/surat/:id", sDelete.DeleteSuratHandler)
-	api.PUT("/surat", sUpdate.UpdateSuratHandler)
+	// endpoint surat
+	api.GET("/surat", actionSurat.NewListSurat().ListSuratHandler)
+	api.GET("/surat/:id", actionSurat.NewReadSurat().ReadSuratHandler)
+	api.DELETE("/surat/:id", actionSurat.NewDeleteSurat().DeleteSuratHandler)
+	api.PUT("/surat", actionSurat.NewUpdateSurat().UpdateSuratHandler)
 	api.POST("/surat", actionSurat.NewCreateSurat().CreateSuratHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))

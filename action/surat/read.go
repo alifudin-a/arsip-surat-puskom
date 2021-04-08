@@ -7,6 +7,7 @@ import (
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat"
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/surat"
+	mid "github.com/alifudin-a/arsip-surat-puskom/route/middleware"
 	"github.com/labstack/echo/v4"
 )
 
@@ -19,6 +20,16 @@ func NewReadSurat() *Read {
 func (rd *Read) ReadSuratHandler(c echo.Context) (err error) {
 	var resp helper.Response
 	var surat *models.ReadSurat
+
+	err = mid.ValidationKey(c)
+	if err != nil {
+		return
+	}
+
+	err = mid.ValidationJWT(c)
+	if err != nil {
+		return
+	}
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

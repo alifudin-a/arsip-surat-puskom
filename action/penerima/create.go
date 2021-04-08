@@ -7,6 +7,7 @@ import (
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/penerima"
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/penerima"
+	mid "github.com/alifudin-a/arsip-surat-puskom/route/middleware"
 	"github.com/labstack/echo/v4"
 )
 
@@ -30,6 +31,16 @@ func (cr *Create) CreatePenerimaHandler(c echo.Context) (err error) {
 	var resp helper.Response
 	var req = new(models.Penerima)
 	var penerima *models.Penerima
+
+	err = mid.ValidationKey(c)
+	if err != nil {
+		return
+	}
+
+	err = mid.ValidationJWT(c)
+	if err != nil {
+		return
+	}
 
 	err = cr.validate(req, c)
 	if err != nil {

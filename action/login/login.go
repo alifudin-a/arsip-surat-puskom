@@ -3,6 +3,7 @@ package action
 import (
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
@@ -27,7 +28,7 @@ func (lg *Login) LoginHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
 	var login *models.Login
-	expires := time.Now().Add(time.Second * 60).Unix()
+	// expires :=
 
 	if err = c.Bind(&login); err != nil {
 		return
@@ -36,10 +37,12 @@ func (lg *Login) LoginHandler(c echo.Context) (err error) {
 	username := login.Username
 	password := login.Password
 
+	lowercaseUsername := strings.ToLower(username)
+
 	repo := repository.NewLoginRepository()
 
 	arg := repository.LoginParams{
-		Username: username,
+		Username: lowercaseUsername,
 		Password: password,
 	}
 
@@ -53,7 +56,7 @@ func (lg *Login) LoginHandler(c echo.Context) (err error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = &LoginTokenClaim{
 		&jwt.StandardClaims{
-			ExpiresAt: expires,
+			ExpiresAt: time.Now().Add(time.Second * 60).Unix(),
 		},
 		models.Login{
 			ID:         login.ID,
