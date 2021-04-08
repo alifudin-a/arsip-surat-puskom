@@ -110,5 +110,6 @@ FROM (
 		)AS penerima
 	FROM tbl_surat ts
 	JOIN tbl_pengguna tp2 on tp2.id = ts.id_pengirim
-	LEFT JOIN tbl_jenis_surat tjs on tjs.id = ts.id_jenis 
+	LEFT JOIN tbl_jenis_surat tjs on tjs.id = ts.id_jenis
+	ORDER BY id DESC
 )t;`

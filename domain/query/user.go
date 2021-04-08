@@ -1,6 +1,6 @@
 package query
 
-var ListAllUser = `SELECT * FROM tbl_pengguna ORDER BY id;`
+var ListAllUser = `SELECT * FROM tbl_pengguna ORDER BY id DESC;`
 
 var ReadUserByID = `SELECT * FROM tbl_pengguna WHERE id = $1;`
 

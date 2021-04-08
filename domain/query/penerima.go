@@ -1,6 +1,6 @@
 package query
 
-var ListAllPenerima = `SELECT * FROM tbl_penerima ORDER BY id;`
+var ListAllPenerima = `SELECT * FROM tbl_penerima ORDER BY id DESC;`
 
 var ReadPenerimaById = `SELECT * FROM tbl_penerima WHERE id = $1;`
 
