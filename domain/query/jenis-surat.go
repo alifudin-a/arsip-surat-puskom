@@ -1,6 +1,6 @@
 package query
 
-var ListAllJenisSurat = `SELECT * FROM tbl_jenis_surat ORDER BY id;`
+var ListAllJenisSurat = `SELECT * FROM tbl_jenis_surat ORDER BY id DESC;`
 
 var ReadJenisSuratById = `SELECT * FROM tbl_jenis_surat WHERE id = $1;`
 
