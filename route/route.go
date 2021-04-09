@@ -7,6 +7,7 @@ import (
 	actionLogin "github.com/alifudin-a/arsip-surat-puskom/action/login"
 	actionPenerima "github.com/alifudin-a/arsip-surat-puskom/action/penerima"
 	actionSurat "github.com/alifudin-a/arsip-surat-puskom/action/surat"
+	actionSuratMasuk "github.com/alifudin-a/arsip-surat-puskom/action/surat-masuk"
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	validator "github.com/go-playground/validator/v10"
@@ -77,6 +78,11 @@ func InitRoute() *echo.Echo {
 	api.DELETE("/surat/:id", actionSurat.NewDeleteSurat().DeleteSuratHandler)
 	api.PUT("/surat", actionSurat.NewUpdateSurat().UpdateSuratHandler)
 	api.POST("/surat", actionSurat.NewCreateSurat().CreateSuratHandler)
+
+	// endpoint surat masuk
+	api.GET("/surat_masuk", actionSuratMasuk.NewListSuratMasuk().ListSuratMasukHandler)
+	api.GET("/surat_masuk/:id", actionSuratMasuk.NewReadSuratMasuk().ReadSuratMasukHandler)
+	api.DELETE("/surat_masuk/:id", actionSuratMasuk.NewDeleteSuratMasuk().DeleteSuratMasukHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
