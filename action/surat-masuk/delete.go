@@ -38,15 +38,35 @@ func (dl *Delete) DeleteSuratMasukHandler(c echo.Context) (err error) {
 		ID: id,
 	}
 
-	exist, err := repo.IsExist(repository.IsSuratMasukExistParams{ID: id})
+	arg2 := repository.DeletePenerimaSuratParams{
+		IDSurat: id,
+	}
+
+	exist2, err := repo.IsPenerimaSuratExist(repository.IsPenerimaSuratExistParams{ID: id})
 	if err != nil {
 		return
+	}
+
+	exist, err := repo.IsSuratMasukExist(repository.IsSuratMasukExistParams{ID: id})
+	if err != nil {
+		return
+	}
+
+	if !exist2 {
+		resp.Code = http.StatusBadRequest
+		resp.Message = "Data tidak ada!"
+		return c.JSON(http.StatusBadRequest, resp)
 	}
 
 	if !exist {
 		resp.Code = http.StatusBadRequest
 		resp.Message = "Data tidak ada!"
 		return c.JSON(http.StatusBadRequest, resp)
+	}
+
+	err = repo.DeletePenerimaSurat(arg2)
+	if err != nil {
+		return
 	}
 
 	err = repo.Delete(arg)

@@ -11,7 +11,12 @@ type SuratMasukRepository interface {
 	FindAllAsc(arg ListSuratMasukParams, queryparam string) ([]models.ListSuratMasuk, error)
 	FindByID(arg GetSuratMasukParams) (*models.ListSuratMasuk, error)
 	Delete(arg DeleteSuratMasukParams) (err error)
-	IsExist(arg IsSuratMasukExistParams) (bool, error)
+	DeletePenerimaSurat(arg DeletePenerimaSuratParams) (err error)
+	IsSuratMasukExist(arg IsSuratMasukExistParams) (bool, error)
+	IsPenerimaSuratExist(arg IsPenerimaSuratExistParams) (bool, error)
+	FindAllByIDPengguna(arg ListSuratMasukByIDPenerimaParams) ([]models.ListSuratMasuk, error)
+	Create(arg CreateSuratMasukParams) (*models.SuratMasuk, error)
+	Update(arg UpdateSuratMasukParams) (*models.SuratMasuk, error)
 }
 
 type repo struct{}
@@ -89,11 +94,33 @@ func (*repo) Delete(arg DeleteSuratMasukParams) (err error) {
 	return nil
 }
 
+type DeletePenerimaSuratParams struct {
+	IDSurat int64
+}
+
+func (*repo) DeletePenerimaSurat(arg DeletePenerimaSuratParams) (err error) {
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	_, err = tx.Exec(query.DeletePenerimaSurat, arg.IDSurat)
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return
+	}
+
+	return nil
+}
+
 type IsSuratMasukExistParams struct {
 	ID int64
 }
 
-func (*repo) IsExist(arg IsSuratMasukExistParams) (bool, error) {
+func (*repo) IsSuratMasukExist(arg IsSuratMasukExistParams) (bool, error) {
 	var db = database.OpenDB()
 	var total int
 
@@ -107,4 +134,117 @@ func (*repo) IsExist(arg IsSuratMasukExistParams) (bool, error) {
 	}
 
 	return true, nil
+}
+
+type IsPenerimaSuratExistParams struct {
+	ID int64
+}
+
+func (*repo) IsPenerimaSuratExist(arg IsPenerimaSuratExistParams) (bool, error) {
+	var db = database.OpenDB()
+	var total int
+
+	err := db.Get(&total, query.IsPenerimaSuratExist, arg.ID)
+	if err != nil {
+		return false, nil
+	}
+
+	if total == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+type ListSuratMasukByIDPenerimaParams struct {
+	IDPengguna int64
+}
+
+func (*repo) FindAllByIDPengguna(arg ListSuratMasukByIDPenerimaParams) ([]models.ListSuratMasuk, error) {
+
+	var suratMasuk []models.ListSuratMasuk
+	var db = database.OpenDB()
+
+	err := db.Select(&suratMasuk, query.ListSuratMasukByIDPenerima, arg.IDPengguna)
+	if err != nil {
+		return nil, err
+	}
+
+	return suratMasuk, nil
+}
+
+type CreateSuratMasukParams struct {
+	Tanggal    string
+	Nomor      string
+	IDPengirim int64
+	Perihal    string
+	IDJenis    int64
+	Keterangan string
+	CreatedAt  string
+}
+
+func (*repo) Create(arg CreateSuratMasukParams) (*models.SuratMasuk, error) {
+
+	var suratMasuk models.SuratMasuk
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.CreateSuratMasuk,
+		arg.Tanggal,
+		arg.Nomor,
+		arg.IDPengirim,
+		arg.Perihal,
+		arg.IDJenis,
+		arg.Keterangan,
+		arg.CreatedAt).StructScan(&suratMasuk)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &suratMasuk, nil
+}
+
+type UpdateSuratMasukParams struct {
+	Tanggal    string
+	Nomor      string
+	IDPengirim int64
+	Perihal    string
+	IDJenis    int64
+	Keterangan string
+	UpdatedAt  string
+	ID         int64
+}
+
+func (*repo) Update(arg UpdateSuratMasukParams) (*models.SuratMasuk, error) {
+
+	var suratMasuk models.SuratMasuk
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.UpdateSuratMasuk,
+		arg.Tanggal,
+		arg.Nomor,
+		arg.IDPengirim,
+		arg.Perihal,
+		arg.IDJenis,
+		arg.Keterangan,
+		arg.UpdatedAt,
+		arg.ID).StructScan(&suratMasuk)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &suratMasuk, nil
 }
