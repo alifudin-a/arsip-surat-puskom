@@ -119,3 +119,50 @@ var DeletePenerimaSuratKeluar = `DELETE FROM tbl_penerima WHERE id_surat = $1;`
 var IsPenerimaSuratKeluarExist = `SELECT COUNT(*) FROM tbl_penerima WHERE id_surat = $1;`
 
 var IsSuratKeluarExist = `SELECT COUNT(*) FROM tbl_surat WHERE id= $1;`
+
+var CreateSuratKeluar = `
+	INSERT
+		INTO
+		tbl_surat ( 
+			tanggal,
+			nomor,
+			id_pengirim,
+			perihal,
+			id_jenis ,
+			keterangan ,
+			created_at 
+		)
+		VALUES ( $1, $2, $3, $4, $5, $6, $7 ) RETURNING *;`
+
+var UpdateSuratKeluar = `
+	UPDATE 
+		tbl_surat
+	SET 
+		tanggal = $1, 
+		nomor = $2, 
+		id_pengirim = $3, 
+		perihal = $4,
+		id_jenis = $5,
+		keterangan = $6,
+		updated_at = $7
+	WHERE
+		id = $8 
+	RETURNING *;`
+
+var CreatePenerimaSuratKeluar = `
+	INSERT
+		INTO
+		tbl_penerima (
+			id_surat, id_pengguna, created_at
+		) 
+		VALUES
+	`
+
+var UpdatePenerimaSuratKeluar = `
+	INSERT
+		INTO
+		tbl_penerima (
+			id_surat, id_pengguna, created_at, updated_at
+		) 
+		VALUES
+	`

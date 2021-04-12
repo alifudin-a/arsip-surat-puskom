@@ -2,8 +2,11 @@ package repository
 
 import (
 	"encoding/json"
+	"fmt"
+	"time"
 
 	database "github.com/alifudin-a/arsip-surat-puskom/database/psql"
+	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat-keluar"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/query"
 	"github.com/jmoiron/sqlx/types"
@@ -18,6 +21,7 @@ type SuratKeluarRepository interface {
 	DeletePenerimaSuratKeluar(arg DeletePenerimaSuratKeluarParams) (err error)
 	IsSuratMasukExist(arg IsSuratKeluarExistParams) (bool, error)
 	IsPenerimaSuratExist(arg IsPenerimaSuratKeluarExistParams) (bool, error)
+	Create(arg CreateSuratKeluarParams) (*models.CreateSuratKeluar, error)
 }
 
 type repo struct{}
@@ -233,4 +237,103 @@ func (*repo) IsPenerimaSuratExist(arg IsPenerimaSuratKeluarExistParams) (bool, e
 	}
 
 	return true, nil
+}
+
+type CreateSuratKeluarParams struct {
+	SuratKeluar         models.SuratKeluar
+	PenerimaSuratKeluar []models.PenerimaSuratKeluar
+}
+
+func (r *repo) Create(arg CreateSuratKeluarParams) (*models.CreateSuratKeluar, error) {
+
+	var suratKeluar models.CreateSuratKeluar
+	var err error
+
+	var surat *models.SuratKeluar
+	surat, err = r.createSurat(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	suratKeluar.SuratKeluar = *surat
+	arg.SuratKeluar.ID = surat.ID
+
+	var penerima []models.PenerimaSuratKeluar
+	penerima, err = r.createPenerima(&arg)
+	if err != nil {
+		return nil, err
+	}
+	suratKeluar.PenerimaSuratKeluar = penerima
+
+	return &suratKeluar, nil
+}
+
+func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, error) {
+	var surat models.SuratKeluar
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.CreateSuratKeluar,
+		arg.SuratKeluar.Tanggal,
+		arg.SuratKeluar.Nomor,
+		arg.SuratKeluar.IDPengirim,
+		arg.SuratKeluar.Perihal,
+		arg.SuratKeluar.IDJenis,
+		arg.SuratKeluar.Keterangan,
+		arg.SuratKeluar.CreatedAt,
+	).StructScan(&surat)
+
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &surat, nil
+}
+
+func (r *repo) createPenerima(arg *CreateSuratKeluarParams) ([]models.PenerimaSuratKeluar, error) {
+	var penerima []models.PenerimaSuratKeluar
+	var db = database.OpenDB()
+
+	q := query.CreatePenerimaSuratKeluar
+	t := time.Now()
+
+	insertParams := []interface{}{}
+
+	for i, v := range arg.PenerimaSuratKeluar {
+		v.IDSurat = arg.SuratKeluar.ID
+		v.CreatedAt2 = helper.NullString(t.Format(helper.LayoutTime))
+
+		var s models.PenerimaSuratKeluar
+
+		s.IDSurat = v.IDSurat
+		s.IDPengguna = v.IDPengguna
+		s.CreatedAt2 = v.CreatedAt2
+
+		p1 := i * 3
+		q += fmt.Sprintf("($%d,$%d,$%d),", p1+1, p1+2, p1+3)
+		insertParams = append(insertParams, v.IDSurat, v.IDPengguna, v.CreatedAt2)
+		penerima = append(penerima, s)
+	}
+
+	q = q[:len(q)-1]
+
+	tx := db.MustBegin()
+	_, err := tx.Exec(q, insertParams...)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return penerima, err
 }
