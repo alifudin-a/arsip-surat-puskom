@@ -54,13 +54,13 @@ func (dl *Delete) DeleteSuratMasukHandler(c echo.Context) (err error) {
 
 	if !exist2 {
 		resp.Code = http.StatusBadRequest
-		resp.Message = "Data tidak ada!"
+		resp.Message = "Data Penerima tidak ada!"
 		return c.JSON(http.StatusBadRequest, resp)
 	}
 
 	if !exist {
 		resp.Code = http.StatusBadRequest
-		resp.Message = "Data tidak ada!"
+		resp.Message = "Data Surat tidak ada!"
 		return c.JSON(http.StatusBadRequest, resp)
 	}
 
