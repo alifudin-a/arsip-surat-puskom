@@ -7,6 +7,7 @@ import (
 	actionLogin "github.com/alifudin-a/arsip-surat-puskom/action/login"
 	actionPenerima "github.com/alifudin-a/arsip-surat-puskom/action/penerima"
 	actionSurat "github.com/alifudin-a/arsip-surat-puskom/action/surat"
+	actionSuratKeluar "github.com/alifudin-a/arsip-surat-puskom/action/surat-keluar"
 	actionSuratMasuk "github.com/alifudin-a/arsip-surat-puskom/action/surat-masuk"
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
@@ -86,6 +87,11 @@ func InitRoute() *echo.Echo {
 	api.DELETE("/surat_masuk/:id", actionSuratMasuk.NewDeleteSuratMasuk().DeleteSuratMasukHandler)
 	api.POST("/surat_masuk", actionSuratMasuk.NewCreateSuratMasuk().CreateSuratMasukHandler)
 	api.PUT("/surat_masuk", actionSuratMasuk.NewUpdateSuratMasuk().UpdateSuratMasukHandler)
+
+	// endpoint surat keluar
+	api.GET("/pengirim_surat_keluar/:id", actionSuratKeluar.NewListSuratKeluar().ListSuratKeluarByIDPengirim)
+	api.GET("/surat_keluar", actionSuratKeluar.NewListSuratKeluar().ListSuratKeluarHandler)
+	api.GET("/surat_keluar/:id", actionSuratKeluar.NewReadSuratKeluar().ReadSuratKeluarHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 
