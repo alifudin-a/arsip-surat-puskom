@@ -10,6 +10,7 @@ import (
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat-keluar"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/query"
 	"github.com/jmoiron/sqlx/types"
+	errs "github.com/pkg/errors"
 )
 
 type SuratKeluarRepository interface {
@@ -22,6 +23,7 @@ type SuratKeluarRepository interface {
 	IsSuratMasukExist(arg IsSuratKeluarExistParams) (bool, error)
 	IsPenerimaSuratExist(arg IsPenerimaSuratKeluarExistParams) (bool, error)
 	Create(arg CreateSuratKeluarParams) (*models.CreateSuratKeluar, error)
+	Update(arg UpdateSuratKeluarParams) (*models.CreateSuratKeluar, error)
 }
 
 type repo struct{}
@@ -237,6 +239,123 @@ func (*repo) IsPenerimaSuratExist(arg IsPenerimaSuratKeluarExistParams) (bool, e
 	}
 
 	return true, nil
+}
+
+type UpdateSuratKeluarParams struct {
+	SuratKeluar         models.SuratKeluar
+	PenerimaSuratKeluar []models.PenerimaSuratKeluar
+}
+
+func (r *repo) Update(arg UpdateSuratKeluarParams) (*models.CreateSuratKeluar, error) {
+	var suratKeluar models.CreateSuratKeluar
+
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.UpdateSuratKeluar,
+		arg.SuratKeluar.Tanggal,
+		arg.SuratKeluar.Nomor,
+		arg.SuratKeluar.IDPengirim,
+		arg.SuratKeluar.Perihal,
+		arg.SuratKeluar.IDJenis,
+		arg.SuratKeluar.Keterangan,
+		arg.SuratKeluar.UpdatedAt,
+		arg.SuratKeluar.ID,
+	).StructScan(&suratKeluar)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &suratKeluar, nil
+}
+
+func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, error) {
+	var surat models.SuratKeluar
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.UpdateSurat,
+		arg.SuratKeluar.Tanggal,
+		arg.SuratKeluar.Nomor,
+		arg.SuratKeluar.IDPengirim,
+		arg.SuratKeluar.Perihal,
+		arg.SuratKeluar.IDJenis,
+		arg.SuratKeluar.Keterangan,
+		arg.SuratKeluar.UpdatedAt,
+		arg.SuratKeluar.ID,
+	).StructScan(&surat)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &surat, nil
+}
+
+func (*repo) updatePenerima(arg *UpdateSuratKeluarParams) ([]models.PenerimaSuratKeluar, error) {
+	var penerima []models.PenerimaSuratKeluar
+	var db = database.OpenDB()
+	var err error
+
+	_, err = db.Exec("DELETE FROM tbl_penerima WHERE id_surat = $1", arg.SuratKeluar.ID)
+	if err != nil {
+		return penerima, errs.Wrap(err, "Gagal mengubah penerima!")
+	}
+
+	var surat models.SuratKeluar
+	err = db.Get(&surat, "SELECT created_at FROM tbl_surat WHERE id = $1", arg.SuratKeluar.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	q := query.UpdatePenerimaSuratKeluar
+
+	updateParams := []interface{}{}
+
+	for i, v := range arg.PenerimaSuratKeluar {
+		v.IDSurat = arg.SuratKeluar.ID
+		v.CreatedAt2 = surat.CreatedAt
+		v.UpdatedAt2 = arg.SuratKeluar.UpdatedAt
+
+		var s models.PenerimaSuratKeluar
+
+		s.IDSurat = v.IDSurat
+		s.IDPengguna = v.IDPengguna
+		s.CreatedAt2 = v.CreatedAt2
+		s.UpdatedAt2 = v.UpdatedAt2
+
+		p1 := i * 4
+		q += fmt.Sprintf("($%d,$%d,$%d,$%d),", p1+1, p1+2, p1+3, p1+4)
+		updateParams = append(updateParams, v.IDSurat, v.IDPengguna, v.CreatedAt2, v.UpdatedAt2)
+		penerima = append(penerima, s)
+	}
+
+	q = q[:len(q)-1]
+
+	tx := db.MustBegin()
+	_, err = tx.Exec(q, updateParams...)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return penerima, nil
 }
 
 type CreateSuratKeluarParams struct {

@@ -94,7 +94,7 @@ func InitRoute() *echo.Echo {
 	api.GET("/surat_keluar/:id", actionSuratKeluar.NewReadSuratKeluar().ReadSuratKeluarHandler)
 	api.DELETE("/surat_keluar/:id", actionSuratKeluar.NewDeleteSuratKeluar().DeleteSuratKeluarHandler)
 	api.POST("/surat_keluar", actionSuratKeluar.NewCreateSuratKeluar().CreateSuratKeluarHandler)
-	// api.PUT("/surat_keluar", actionSuratKeluar)
+	api.PUT("/surat_keluar", actionSuratKeluar.NewUpdateSuratKeluar().UpdateSuratHandler)
 
 	e.Logger.Fatal(e.Start(":9000"))
 

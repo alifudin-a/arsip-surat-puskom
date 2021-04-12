@@ -23,3 +23,22 @@ func CreateSuratKeluar(params *models.CreateSuratKeluar) repository.CreateSuratK
 
 	return res
 }
+
+func UpdateSuratKeluar(params *models.CreateSuratKeluar) repository.UpdateSuratKeluarParams {
+	var res repository.UpdateSuratKeluarParams
+
+	t := time.Now()
+
+	res.SuratKeluar.ID = params.ID
+	res.SuratKeluar.Tanggal = params.Tanggal
+	res.SuratKeluar.Nomor = params.Nomor
+	res.SuratKeluar.IDPengirim = params.IDPengirim
+	res.SuratKeluar.Perihal = params.Perihal
+	res.SuratKeluar.IDJenis = params.IDJenis
+	res.SuratKeluar.Keterangan = params.Keterangan
+	res.SuratKeluar.UpdatedAt = helper.NullString(t.Format(helper.LayoutTime))
+
+	res.PenerimaSuratKeluar = params.PenerimaSuratKeluar
+
+	return res
+}
