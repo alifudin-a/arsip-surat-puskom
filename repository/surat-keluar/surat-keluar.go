@@ -12,8 +12,12 @@ import (
 type SuratKeluarRepository interface {
 	FindAllDesc() ([]models.ListSuratKeluar, error)
 	FindAllAsc(arg ListSUratKeluarAscParams, queryparam string) ([]models.ListSuratKeluar, error)
-	FindAllByIDPengguna(arg ListSuratKeluarByIDPengirimParams) ([]models.ListSuratKeluar, error)
+	FindAllByIDPengirim(arg ListSuratKeluarByIDPengirimParams) ([]models.ListSuratKeluar, error)
 	FindByID(arg ReadSuratKeluarParams) (*models.ReadSuratKeluar, error)
+	Delete(arg DeleteSuratKeluarParams) (err error)
+	DeletePenerimaSuratKeluar(arg DeletePenerimaSuratKeluarParams) (err error)
+	IsSuratMasukExist(arg IsSuratKeluarExistParams) (bool, error)
+	IsPenerimaSuratExist(arg IsPenerimaSuratKeluarExistParams) (bool, error)
 }
 
 type repo struct{}
@@ -26,7 +30,7 @@ type ListSuratKeluarByIDPengirimParams struct {
 	IDPengguna int64
 }
 
-func (*repo) FindAllByIDPengguna(arg ListSuratKeluarByIDPengirimParams) ([]models.ListSuratKeluar, error) {
+func (*repo) FindAllByIDPengirim(arg ListSuratKeluarByIDPengirimParams) ([]models.ListSuratKeluar, error) {
 
 	var suratKeluar []models.ListSuratKeluar
 	var db = database.OpenDB()
@@ -145,4 +149,88 @@ func (*repo) FindByID(arg ReadSuratKeluarParams) (*models.ReadSuratKeluar, error
 	}
 
 	return &suratKeluar, nil
+}
+
+type DeleteSuratKeluarParams struct {
+	ID int64
+}
+
+func (*repo) Delete(arg DeleteSuratKeluarParams) (err error) {
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	_, err = tx.Exec(query.DeleteSuratKeluar, arg.ID)
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return
+	}
+
+	return nil
+}
+
+type DeletePenerimaSuratKeluarParams struct {
+	IDSurat int64
+}
+
+func (*repo) DeletePenerimaSuratKeluar(arg DeletePenerimaSuratKeluarParams) (err error) {
+	var db = database.OpenDB()
+
+	tx := db.MustBegin()
+	_, err = tx.Exec(query.DeletePenerimaSuratKeluar, arg.IDSurat)
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return
+	}
+
+	return nil
+}
+
+type IsSuratKeluarExistParams struct {
+	ID int64
+}
+
+func (*repo) IsSuratMasukExist(arg IsSuratKeluarExistParams) (bool, error) {
+	var db = database.OpenDB()
+	var total int
+
+	err := db.Get(&total, query.IsSuratKeluarExist, arg.ID)
+	if err != nil {
+		return false, nil
+	}
+
+	if total == 0 {
+		return false, nil
+	}
+
+	return true, nil
+}
+
+type IsPenerimaSuratKeluarExistParams struct {
+	ID int64
+}
+
+func (*repo) IsPenerimaSuratExist(arg IsPenerimaSuratKeluarExistParams) (bool, error) {
+	var db = database.OpenDB()
+	var total int
+
+	err := db.Get(&total, query.IsPenerimaSuratKeluarExist, arg.ID)
+	if err != nil {
+		return false, nil
+	}
+
+	if total == 0 {
+		return false, nil
+	}
+
+	return true, nil
 }

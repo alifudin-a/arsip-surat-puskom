@@ -40,7 +40,7 @@ func (ls *List) ListSuratKeluarByIDPengirim(c echo.Context) (err error) {
 		IDPengguna: int64(id),
 	}
 
-	suratKeluar, err = repo.FindAllByIDPengguna(arg)
+	suratKeluar, err = repo.FindAllByIDPengirim(arg)
 	if err != nil {
 		return
 	}

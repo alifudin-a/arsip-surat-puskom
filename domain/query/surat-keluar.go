@@ -111,3 +111,11 @@ FROM (
 	LEFT JOIN tbl_jenis_surat tjs on tjs.id = ts.id_jenis
 	WHERE ts.id = $1
 )t;`
+
+var DeleteSuratKeluar = `DELETE FROM tbl_surat WHERE id = $1;`
+
+var DeletePenerimaSuratKeluar = `DELETE FROM tbl_penerima WHERE id_surat = $1;`
+
+var IsPenerimaSuratKeluarExist = `SELECT COUNT(*) FROM tbl_penerima WHERE id_surat = $1;`
+
+var IsSuratKeluarExist = `SELECT COUNT(*) FROM tbl_surat WHERE id= $1;`
