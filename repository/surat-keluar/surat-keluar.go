@@ -435,7 +435,7 @@ func (r *repo) createPenerima(arg *CreateSuratKeluarParams) ([]models.PenerimaSu
 		s.CreatedAt2 = v.CreatedAt2
 
 		p1 := i * 3
-		q += fmt.Sprintf("($%d,$%d,$%d),", p1+1, p1+2, p1+3)
+		q += fmt.Sprintf("($%d,unnest(array[$%d::smallint[]]),$%d),", p1+1, p1+2, p1+3)
 		insertParams = append(insertParams, v.IDSurat, v.IDPengguna, v.CreatedAt2)
 		penerima = append(penerima, s)
 	}
