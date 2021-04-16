@@ -15,6 +15,7 @@ type SuratMasukRepository interface {
 	IsSuratMasukExist(arg IsSuratMasukExistParams) (bool, error)
 	IsPenerimaSuratExist(arg IsPenerimaSuratExistParams) (bool, error)
 	FindAllByIDPengguna(arg ListSuratMasukByIDPenerimaParams) ([]models.ListSuratMasuk, error)
+	FindAllByIDPenggunaAsc(arg ListSuratMasukByIDPenerimaAscParams, queryparam string) ([]models.ListSuratMasuk, error)
 	Create(arg CreateSuratMasukParams) (*models.SuratMasuk, error)
 	Update(arg UpdateSuratMasukParams) (*models.SuratMasuk, error)
 }
@@ -166,6 +167,24 @@ func (*repo) FindAllByIDPengguna(arg ListSuratMasukByIDPenerimaParams) ([]models
 	var db = database.OpenDB()
 
 	err := db.Select(&suratMasuk, query.ListSuratMasukByIDPenerima, arg.IDPengguna)
+	if err != nil {
+		return nil, err
+	}
+
+	return suratMasuk, nil
+}
+
+type ListSuratMasukByIDPenerimaAscParams struct {
+	IDPengguna int64
+	Offset     int64
+}
+
+func (*repo) FindAllByIDPenggunaAsc(arg ListSuratMasukByIDPenerimaAscParams, queryparam string) ([]models.ListSuratMasuk, error) {
+
+	var suratMasuk []models.ListSuratMasuk
+	var db = database.OpenDB()
+
+	err := db.Select(&suratMasuk, query.ListSuratMasukByIDPenerimaAsc, arg.IDPengguna, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

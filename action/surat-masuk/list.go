@@ -21,7 +21,7 @@ func (ls *List) ListPenerimaSuratMasukHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
 	var suratMasuk []models.ListSuratMasuk
-	// var qparam = c.QueryParam("asc_offset")
+	var qparam = c.QueryParam("asc_offset")
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -37,24 +37,20 @@ func (ls *List) ListPenerimaSuratMasukHandler(c echo.Context) (err error) {
 
 	repo := repository.NewSuratMasukRepository()
 
-	// arg := repository.ListSuratMasukParams{
-	// 	Offset: 0,
-	// }
-
-	// if qparam != "" {
-	// 	surat, err = repo.FindAllAsc(arg, qparam)
-	// } else {
-	// 	surat, err = repo.FindAllDesc()
-	// }
-	// if err != nil {
-	// 	return
-	// }
-
 	arg := repository.ListSuratMasukByIDPenerimaParams{
 		IDPengguna: int64(id),
 	}
 
-	suratMasuk, err = repo.FindAllByIDPengguna(arg)
+	arg2 := repository.ListSuratMasukByIDPenerimaAscParams{
+		IDPengguna: int64(id),
+		Offset:     0,
+	}
+
+	if qparam != "" {
+		suratMasuk, err = repo.FindAllByIDPenggunaAsc(arg2, qparam)
+	} else {
+		suratMasuk, err = repo.FindAllByIDPengguna(arg)
+	}
 	if err != nil {
 		return
 	}

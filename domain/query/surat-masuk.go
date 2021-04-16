@@ -77,6 +77,24 @@ left join tbl_jenis_surat tjs on tjs.id = ts.id_jenis
 left join tbl_penerima tp2 on tp2.id_surat = ts.id
 where tp2.id_pengguna = $1 order by id DESC;`
 
+var ListSuratMasukByIDPenerimaAsc = `
+select 
+	ts.id, 
+	ts.tanggal, 
+	ts.nomor, 
+	ts.id_pengirim, 
+	tp."name" as pengirim,
+	ts.id_jenis,
+	tjs."name" as jenis,
+	ts.perihal, 
+	ts.keterangan
+from 
+	tbl_surat ts
+left join tbl_pengguna tp on tp.id = ts.id_pengirim
+left join tbl_jenis_surat tjs on tjs.id = ts.id_jenis
+left join tbl_penerima tp2 on tp2.id_surat = ts.id
+where tp2.id_pengguna = $1 order by id ASC OFFSET $2;`
+
 var CreateSuratMasuk = `
 	insert 
 		into 
