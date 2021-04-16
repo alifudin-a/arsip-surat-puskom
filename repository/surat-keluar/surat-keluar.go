@@ -17,6 +17,7 @@ type SuratKeluarRepository interface {
 	FindAllDesc() ([]models.ListSuratKeluar, error)
 	FindAllAsc(arg ListSUratKeluarAscParams, queryparam string) ([]models.ListSuratKeluar, error)
 	FindAllByIDPengirim(arg ListSuratKeluarByIDPengirimParams) ([]models.ListSuratKeluar, error)
+	FindAllByIDPengirimAsc(arg ListSuratKeluarByIDPengirimAscParams, queryparam string) ([]models.ListSuratKeluar, error)
 	FindByID(arg ReadSuratKeluarParams) (*models.ReadSuratKeluar, error)
 	Delete(arg DeleteSuratKeluarParams) (err error)
 	DeletePenerimaSuratKeluar(arg DeletePenerimaSuratKeluarParams) (err error)
@@ -43,6 +44,41 @@ func (*repo) FindAllByIDPengirim(arg ListSuratKeluarByIDPengirimParams) ([]model
 	var jsonString types.JSONText
 
 	rows, err := db.Queryx(query.ListSuratKeluarByIDPengirim, arg.IDPengguna)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		err = rows.Scan(&jsonString)
+		if err != nil {
+			return nil, err
+		}
+
+		var s models.ListSuratKeluar
+
+		err = json.Unmarshal([]byte(jsonString), &s)
+		if err != nil {
+			return nil, err
+		}
+
+		suratKeluar = append(suratKeluar, s)
+	}
+
+	return suratKeluar, nil
+}
+
+type ListSuratKeluarByIDPengirimAscParams struct {
+	IDPengguna int64
+	Offset     int64
+}
+
+func (*repo) FindAllByIDPengirimAsc(arg ListSuratKeluarByIDPengirimAscParams, queryparam string) ([]models.ListSuratKeluar, error) {
+
+	var suratKeluar []models.ListSuratKeluar
+	var db = database.OpenDB()
+	var jsonString types.JSONText
+
+	rows, err := db.Queryx(query.ListSuratKeluarByIDPengirimAsc, arg.IDPengguna, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

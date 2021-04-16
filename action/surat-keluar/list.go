@@ -21,6 +21,7 @@ func (ls *List) ListSuratKeluarByIDPengirim(c echo.Context) (err error) {
 
 	var resp helper.Response
 	var suratKeluar []models.ListSuratKeluar
+	var qparam = c.QueryParam("asc_offset")
 
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -40,7 +41,16 @@ func (ls *List) ListSuratKeluarByIDPengirim(c echo.Context) (err error) {
 		IDPengguna: int64(id),
 	}
 
-	suratKeluar, err = repo.FindAllByIDPengirim(arg)
+	arg2 := repository.ListSuratKeluarByIDPengirimAscParams{
+		IDPengguna: int64(id),
+		Offset:     0,
+	}
+
+	if qparam != "" {
+		suratKeluar, err = repo.FindAllByIDPengirimAsc(arg2, qparam)
+	} else {
+		suratKeluar, err = repo.FindAllByIDPengirim(arg)
+	}
 	if err != nil {
 		return
 	}
