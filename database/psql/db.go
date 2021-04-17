@@ -35,7 +35,7 @@ func OpenDB() {
 	// database pooling
 	db.DB.SetMaxIdleConns(10)
 	db.DB.SetMaxOpenConns(10)
-	db.DB.SetConnMaxLifetime(time.Minute * 10)
+	db.DB.SetConnMaxLifetime(time.Minute * 5)
 
 	DB = db
 }
