@@ -30,7 +30,7 @@ func NewSuratRepository() SuratRepository {
 
 func (*repo) FindAll() ([]models.ListSurat, error) {
 	var surat []models.ListSurat
-	var db = database.OpenDB()
+	var db = database.DB
 	var jsonString types.JSONText
 
 	rows, err := db.Queryx(query.ListSurat)
@@ -64,7 +64,7 @@ type ReadSuratParams struct {
 
 func (*repo) FindById(arg ReadSuratParams) (*models.ReadSurat, error) {
 	var surat models.ReadSurat
-	var db = database.OpenDB()
+	var db = database.DB
 	var jsonString types.JSONText
 
 	row, err := db.Queryx(query.ReadSuratByID, arg.ID)
@@ -93,7 +93,7 @@ type DeleteSuratParams struct {
 }
 
 func (*repo) Delete(arg DeleteSuratParams) (err error) {
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	_, err = tx.Exec(query.DeleteSurat, arg.ID)
@@ -116,7 +116,7 @@ type IsExistSuratParams struct {
 }
 
 func (*repo) IsExist(arg IsExistSuratParams) (bool, error) {
-	var db = database.OpenDB()
+	var db = database.DB
 	var total int
 
 	err := db.Get(&total, query.IsExistSurat, arg.ID)
@@ -161,7 +161,7 @@ func (r *repo) Update(arg UpdateSuratParams) (*models.CreateSuratPenerima, error
 
 func (*repo) updateSurat(arg *UpdateSuratParams) (*models.Surat, error) {
 	var surat models.Surat
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.UpdateSurat,
@@ -189,7 +189,7 @@ func (*repo) updateSurat(arg *UpdateSuratParams) (*models.Surat, error) {
 
 func (*repo) updatePenerimaSurat(arg *UpdateSuratParams) ([]models.Penerima, error) {
 	var penerima []models.Penerima
-	var db = database.OpenDB()
+	var db = database.DB
 	var err error
 
 	_, err = db.Exec("DELETE FROM tbl_penerima WHERE id_surat = $1", arg.Surat.ID)
@@ -272,7 +272,7 @@ func (r *repo) Create(arg CreateSurat) (*models.CreateSuratPenerima, error) {
 
 func (r *repo) createSurat(arg *CreateSurat) (*models.Surat, error) {
 	var surat models.Surat
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.CreateSurat,
@@ -300,7 +300,7 @@ func (r *repo) createSurat(arg *CreateSurat) (*models.Surat, error) {
 
 func (r *repo) createPenerima(arg *CreateSurat) ([]models.Penerima, error) {
 	var suratPenerima []models.Penerima
-	var db = database.OpenDB()
+	var db = database.DB
 
 	q := query.CreatePenerimaSurat
 	t := time.Now()

@@ -25,7 +25,7 @@ func (*repo) FindAll() ([]models.Penerima, error) {
 
 	var penerima []models.Penerima
 
-	var db = database.OpenDB()
+	var db = database.DB
 
 	err := db.Select(&penerima, query.ListAllPenerima)
 	if err != nil {
@@ -42,7 +42,7 @@ type ReadPenerimaParams struct {
 
 func (*repo) FindById(arg ReadPenerimaParams) (*models.Penerima, error) {
 	var penerima models.Penerima
-	var db = database.OpenDB()
+	var db = database.DB
 
 	err := db.Get(&penerima, query.ReadPenerimaById, arg.ID)
 	if err != nil {
@@ -58,7 +58,7 @@ type DeletePenerimaParams struct {
 }
 
 func (*repo) Delete(arg DeletePenerimaParams) (err error) {
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	_, err = tx.Exec(query.DeletePenerima, arg.ID)
@@ -81,7 +81,7 @@ type IsExistPenerimaParams struct {
 }
 
 func (*repo) IsExist(arg IsExistPenerimaParams) (bool, error) {
-	var db = database.OpenDB()
+	var db = database.DB
 	var total int
 
 	err := db.Get(&total, query.IsExistPenerima, arg.ID)
@@ -105,7 +105,7 @@ type CreatePenerimaParams struct {
 
 func (*repo) Create(arg CreatePenerimaParams) (*models.Penerima, error) {
 	var penerima models.Penerima
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.CreatePenerima, arg.IDSurat, arg.IDPengguna, arg.CreatedAt).StructScan(&penerima)
@@ -132,7 +132,7 @@ type UpdatePenerimaParams struct {
 
 func (*repo) Update(arg UpdatePenerimaParams) (*models.Penerima, error) {
 	var penerima models.Penerima
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.UpdatePenerima, arg.IDSurat, arg.IDPengguna, arg.UpdatedAt, arg.ID).StructScan(&penerima)

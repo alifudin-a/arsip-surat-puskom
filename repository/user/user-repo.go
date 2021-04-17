@@ -28,7 +28,7 @@ func (*repo) FindAll() ([]models.User, error) {
 
 	var user []models.User
 
-	var db = database.OpenDB()
+	var db = database.DB
 
 	err := db.Select(&user, query.ListAllUser)
 	if err != nil {
@@ -45,7 +45,7 @@ type ReadUserParams struct {
 
 func (*repo) FindById(arg ReadUserParams) (*models.User, error) {
 	var user models.User
-	var db = database.OpenDB()
+	var db = database.DB
 
 	err := db.Get(&user, query.ReadUserByID, arg.ID)
 	if err != nil {
@@ -61,7 +61,7 @@ type DeleteUserParams struct {
 }
 
 func (*repo) Delete(arg DeleteUserParams) (err error) {
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	_, err = tx.Exec(query.DeleteUser, arg.ID)
@@ -84,7 +84,7 @@ type IsExistUserParams struct {
 }
 
 func (*repo) IsExist(arg IsExistUserParams) (bool, error) {
-	var db = database.OpenDB()
+	var db = database.DB
 	var total int
 
 	err := db.Get(&total, query.IsExistUser, arg.ID)
@@ -108,7 +108,7 @@ type CreateUserParams struct {
 
 func (*repo) Create(arg CreateUserParams) (*models.User, error) {
 	var user models.User
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.CreateUser, arg.Name, arg.Fullname, arg.CreatedAt).StructScan(&user)
@@ -135,7 +135,7 @@ type UpdateUserParams struct {
 
 func (*repo) Update(arg UpdateUserParams) (*models.User, error) {
 	var user models.User
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.UpdateUser, arg.Name, arg.Fullname, arg.UpdatedAt, arg.ID).StructScan(&user)

@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/lib/pq"
 )
 
-func OpenDB() *sqlx.DB {
+var DB *sqlx.DB
+
+func OpenDB() {
 	var (
 		host     = os.Getenv("DB_HOST")
 		port     = os.Getenv("DB_PORT")
@@ -29,5 +32,10 @@ func OpenDB() *sqlx.DB {
 		log.Printf("Connected to database %s\n", dbname)
 	}
 
-	return db
+	// database pooling
+	db.DB.SetMaxIdleConns(10)
+	db.DB.SetMaxOpenConns(10)
+	db.DB.SetConnMaxLifetime(time.Minute * 10)
+
+	DB = db
 }

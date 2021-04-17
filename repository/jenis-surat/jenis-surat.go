@@ -28,7 +28,7 @@ func (*repo) FindAll() ([]models.JenisSurat, error) {
 
 	var jenis []models.JenisSurat
 
-	var db = database.OpenDB()
+	var db = database.DB
 
 	err := db.Select(&jenis, query.ListAllJenisSurat)
 	if err != nil {
@@ -45,7 +45,7 @@ type ReadJenisSuratParams struct {
 
 func (*repo) FindById(arg ReadJenisSuratParams) (*models.JenisSurat, error) {
 	var jenis models.JenisSurat
-	var db = database.OpenDB()
+	var db = database.DB
 
 	err := db.Get(&jenis, query.ReadJenisSuratById, arg.ID)
 	if err != nil {
@@ -61,7 +61,7 @@ type DeleteJenisSuratParams struct {
 }
 
 func (*repo) Delete(arg DeleteJenisSuratParams) (err error) {
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	_, err = tx.Exec(query.DeleteJenisSurat, arg.ID)
@@ -84,7 +84,7 @@ type IsExistJenisSuratParams struct {
 }
 
 func (*repo) IsExist(arg IsExistJenisSuratParams) (bool, error) {
-	var db = database.OpenDB()
+	var db = database.DB
 	var total int
 
 	err := db.Get(&total, query.IsExistJenisSurat, arg.ID)
@@ -107,7 +107,7 @@ type CreateJenisSuratParams struct {
 
 func (*repo) Create(arg CreateJenisSuratParams) (*models.JenisSurat, error) {
 	var jenis models.JenisSurat
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.CreateJenisSurat, arg.Name, arg.CreatedAt).StructScan(&jenis)
@@ -133,7 +133,7 @@ type UpdateJenisSuratParams struct {
 
 func (*repo) Update(arg UpdateJenisSuratParams) (*models.JenisSurat, error) {
 	var jenis models.JenisSurat
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.UpdateJenisSurat, arg.Name, arg.UpdatedAt, arg.ID).StructScan(&jenis)

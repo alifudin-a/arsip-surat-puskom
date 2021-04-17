@@ -23,7 +23,7 @@ type LoginParams struct {
 
 func (*repo) Login(arg LoginParams) (*models.Login, error) {
 	var login models.Login
-	var db = database.OpenDB()
+	var db = database.DB
 
 	err := db.Get(&login, query.Login, arg.Username, arg.Password)
 	if err != nil {

@@ -40,7 +40,7 @@ type ListSuratKeluarByIDPengirimParams struct {
 func (*repo) FindAllByIDPengirim(arg ListSuratKeluarByIDPengirimParams) ([]models.ListSuratKeluar, error) {
 
 	var suratKeluar []models.ListSuratKeluar
-	var db = database.OpenDB()
+	var db = database.DB
 	var jsonString types.JSONText
 
 	rows, err := db.Queryx(query.ListSuratKeluarByIDPengirim, arg.IDPengguna)
@@ -75,7 +75,7 @@ type ListSuratKeluarByIDPengirimAscParams struct {
 func (*repo) FindAllByIDPengirimAsc(arg ListSuratKeluarByIDPengirimAscParams, queryparam string) ([]models.ListSuratKeluar, error) {
 
 	var suratKeluar []models.ListSuratKeluar
-	var db = database.OpenDB()
+	var db = database.DB
 	var jsonString types.JSONText
 
 	rows, err := db.Queryx(query.ListSuratKeluarByIDPengirimAsc, arg.IDPengguna, arg.Offset)
@@ -104,7 +104,7 @@ func (*repo) FindAllByIDPengirimAsc(arg ListSuratKeluarByIDPengirimAscParams, qu
 
 func (*repo) FindAllDesc() ([]models.ListSuratKeluar, error) {
 	var suratKeluar []models.ListSuratKeluar
-	var db = database.OpenDB()
+	var db = database.DB
 	var jsonString types.JSONText
 
 	rows, err := db.Queryx(query.ListSuratKeluar)
@@ -137,7 +137,7 @@ type ListSUratKeluarAscParams struct {
 
 func (*repo) FindAllAsc(arg ListSUratKeluarAscParams, queryparam string) ([]models.ListSuratKeluar, error) {
 	var suratKeluar []models.ListSuratKeluar
-	var db = database.OpenDB()
+	var db = database.DB
 	var jsonString types.JSONText
 
 	rows, err := db.Queryx(query.ListSuratKeluarAsc, arg.Offset)
@@ -170,7 +170,7 @@ type ReadSuratKeluarParams struct {
 
 func (*repo) FindByID(arg ReadSuratKeluarParams) (*models.ReadSuratKeluar, error) {
 	var suratKeluar models.ReadSuratKeluar
-	var db = database.OpenDB()
+	var db = database.DB
 	var jsonString types.JSONText
 
 	row, err := db.Queryx(query.ReadSuratKeluar, arg.ID)
@@ -198,7 +198,7 @@ type DeleteSuratKeluarParams struct {
 }
 
 func (*repo) Delete(arg DeleteSuratKeluarParams) (err error) {
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	_, err = tx.Exec(query.DeleteSuratKeluar, arg.ID)
@@ -220,7 +220,7 @@ type DeletePenerimaSuratKeluarParams struct {
 }
 
 func (*repo) DeletePenerimaSuratKeluar(arg DeletePenerimaSuratKeluarParams) (err error) {
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	_, err = tx.Exec(query.DeletePenerimaSuratKeluar, arg.IDSurat)
@@ -242,7 +242,7 @@ type IsSuratKeluarExistParams struct {
 }
 
 func (*repo) IsSuratMasukExist(arg IsSuratKeluarExistParams) (bool, error) {
-	var db = database.OpenDB()
+	var db = database.DB
 	var total int
 
 	err := db.Get(&total, query.IsSuratKeluarExist, arg.ID)
@@ -262,7 +262,7 @@ type IsPenerimaSuratKeluarExistParams struct {
 }
 
 func (*repo) IsPenerimaSuratExist(arg IsPenerimaSuratKeluarExistParams) (bool, error) {
-	var db = database.OpenDB()
+	var db = database.DB
 	var total int
 
 	err := db.Get(&total, query.IsPenerimaSuratKeluarExist, arg.ID)
@@ -285,7 +285,7 @@ type UpdateSuratKeluarParams struct {
 func (r *repo) Update(arg UpdateSuratKeluarParams) (*models.CreateSuratKeluar, error) {
 	var suratKeluar models.CreateSuratKeluar
 
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.UpdateSuratKeluar,
@@ -313,7 +313,7 @@ func (r *repo) Update(arg UpdateSuratKeluarParams) (*models.CreateSuratKeluar, e
 
 func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, error) {
 	var surat models.SuratKeluar
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.UpdateSurat,
@@ -341,7 +341,7 @@ func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, err
 
 func (*repo) updatePenerima(arg *UpdateSuratKeluarParams) ([]models.PenerimaSuratKeluar, error) {
 	var penerima []models.PenerimaSuratKeluar
-	var db = database.OpenDB()
+	var db = database.DB
 	var err error
 
 	_, err = db.Exec("DELETE FROM tbl_penerima WHERE id_surat = $1", arg.SuratKeluar.ID)
@@ -425,7 +425,7 @@ func (r *repo) Create(arg CreateSuratKeluarParams) (*models.CreateSuratKeluar, e
 
 func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, error) {
 	var surat models.SuratKeluar
-	var db = database.OpenDB()
+	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.CreateSuratKeluar,
@@ -453,7 +453,7 @@ func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, e
 
 func (r *repo) createPenerima(arg *CreateSuratKeluarParams) ([]models.PenerimaSuratKeluar, error) {
 	var penerima []models.PenerimaSuratKeluar
-	var db = database.OpenDB()
+	var db = database.DB
 
 	q := query.CreatePenerimaSuratKeluar
 	t := time.Now()
