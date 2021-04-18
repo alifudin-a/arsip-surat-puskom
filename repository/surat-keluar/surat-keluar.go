@@ -10,6 +10,7 @@ import (
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat-keluar"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/query"
 	"github.com/jmoiron/sqlx/types"
+	"github.com/lib/pq"
 	errs "github.com/pkg/errors"
 )
 
@@ -472,7 +473,7 @@ func (r *repo) createPenerima(arg *CreateSuratKeluarParams) ([]models.PenerimaSu
 
 		p1 := i * 3
 		q += fmt.Sprintf("($%d,unnest(array[$%d::smallint[]]),$%d),", p1+1, p1+2, p1+3)
-		insertParams = append(insertParams, v.IDSurat, v.IDPengguna, v.CreatedAt2)
+		insertParams = append(insertParams, v.IDSurat, pq.Int64Array(v.IDPengguna), v.CreatedAt2)
 		penerima = append(penerima, s)
 	}
 
