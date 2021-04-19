@@ -110,6 +110,16 @@ var CreateSuratMasuk = `
 				$1,$2,$3,$4,$5,$6,$7
 			) RETURNING *;`
 
+var CreatePenerimaSuratMasuk = `
+	insert 
+		into 
+			tbl_penerima (
+				id_surat, 
+				id_pengguna, 
+				created_at
+			) values ($1, $2, $3) returning *;
+`
+
 var UpdateSuratMasuk = `
 UPDATE 
 	tbl_surat

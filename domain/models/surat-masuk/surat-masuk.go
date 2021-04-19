@@ -14,6 +14,14 @@ type SuratMasuk struct {
 	UpdatedAt  helper.NullString `json:"updated_at,omitempty" db:"updated_at"`
 }
 
+type Penerima struct {
+	ID         int64             `json:"-" db:"id"`
+	IDSurat    int64             `json:"-" db:"id_surat"`
+	IDPengguna int64             `json:"id_penerima" db:"id_pengguna"`
+	CreatedAt2 helper.NullString `json:"-,omitempty" db:"created_at"`
+	UpdatedAt2 helper.NullString `json:"-,omitempty" db:"updated_at"`
+}
+
 type ListSuratMasuk struct {
 	ID         int64             `json:"id" db:"id"`
 	Tanggal    string            `json:"tanggal" db:"tanggal" validate:"required"`
@@ -26,4 +34,9 @@ type ListSuratMasuk struct {
 	Keterangan *string           `json:"keterangan" db:"keterangan"`
 	CreatedAt  helper.NullString `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt  helper.NullString `json:"updated_at,omitempty" db:"updated_at"`
+}
+
+type CreateSuratMasuk struct {
+	SuratMasuk
+	Penerima
 }

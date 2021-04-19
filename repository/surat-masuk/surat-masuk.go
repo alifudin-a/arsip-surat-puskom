@@ -16,7 +16,7 @@ type SuratMasukRepository interface {
 	IsPenerimaSuratExist(arg IsPenerimaSuratExistParams) (bool, error)
 	FindAllByIDPengguna(arg ListSuratMasukByIDPenerimaParams) ([]models.ListSuratMasuk, error)
 	FindAllByIDPenggunaAsc(arg ListSuratMasukByIDPenerimaAscParams, queryparam string) ([]models.ListSuratMasuk, error)
-	Create(arg CreateSuratMasukParams) (*models.SuratMasuk, error)
+	Create(arg CreateSuratMasukParams) (*models.CreateSuratMasuk, error)
 	Update(arg UpdateSuratMasukParams) (*models.SuratMasuk, error)
 }
 
@@ -193,29 +193,49 @@ func (*repo) FindAllByIDPenggunaAsc(arg ListSuratMasukByIDPenerimaAscParams, que
 }
 
 type CreateSuratMasukParams struct {
-	Tanggal    string
-	Nomor      string
-	IDPengirim int64
-	Perihal    string
-	IDJenis    int64
-	Keterangan string
-	CreatedAt  string
+	SuratMasuk models.SuratMasuk
+	Penerima   models.Penerima
 }
 
-func (*repo) Create(arg CreateSuratMasukParams) (*models.SuratMasuk, error) {
+func (r *repo) Create(arg CreateSuratMasukParams) (*models.CreateSuratMasuk, error) {
 
+	var suratMasuk models.CreateSuratMasuk
+	var err error
+
+	var s1 *models.SuratMasuk
+	s1, err = r.createSurat(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	suratMasuk.SuratMasuk = *s1
+	// arg.SuratMasuk.ID = s1.ID
+
+	var s2 *models.Penerima
+	arg.Penerima.IDSurat = s1.ID
+	s2, err = r.createPenerima(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	suratMasuk.Penerima = *s2
+
+	return &suratMasuk, nil
+}
+
+func (*repo) createSurat(arg *CreateSuratMasukParams) (*models.SuratMasuk, error) {
 	var suratMasuk models.SuratMasuk
 	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.CreateSuratMasuk,
-		arg.Tanggal,
-		arg.Nomor,
-		arg.IDPengirim,
-		arg.Perihal,
-		arg.IDJenis,
-		arg.Keterangan,
-		arg.CreatedAt).StructScan(&suratMasuk)
+		arg.SuratMasuk.Tanggal,
+		arg.SuratMasuk.Nomor,
+		arg.SuratMasuk.IDPengirim,
+		arg.SuratMasuk.Perihal,
+		arg.SuratMasuk.IDJenis,
+		arg.SuratMasuk.Keterangan,
+		arg.SuratMasuk.CreatedAt).StructScan(&suratMasuk)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -227,6 +247,32 @@ func (*repo) Create(arg CreateSuratMasukParams) (*models.SuratMasuk, error) {
 	}
 
 	return &suratMasuk, nil
+}
+
+func (*repo) createPenerima(arg *CreateSuratMasukParams) (*models.Penerima, error) {
+	var penerima models.Penerima
+	var db = database.DB
+
+	// penerima.IDSurat = arg.SuratMasuk.ID
+
+	// arg.Penerima.IDSurat = arg.SuratMasuk.ID
+
+	tx := db.MustBegin()
+	err := tx.QueryRowx(query.CreatePenerimaSuratMasuk,
+		arg.Penerima.IDSurat,
+		arg.Penerima.IDPengguna,
+		arg.Penerima.CreatedAt2).StructScan(&penerima)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &penerima, nil
 }
 
 type UpdateSuratMasukParams struct {
