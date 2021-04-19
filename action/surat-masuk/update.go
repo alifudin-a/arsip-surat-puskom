@@ -41,10 +41,6 @@ func (up *Update) UpdateSuratMasukHandler(c echo.Context) (err error) {
 		return
 	}
 
-	if err = c.Bind(req); err != nil {
-		return
-	}
-
 	repo := repository.NewSuratMasukRepository()
 
 	arg := builder.UpdateSuratMasuk(req)
