@@ -59,6 +59,24 @@ var IsPenerimaSuratExist = `SELECT COUNT(*) FROM tbl_penerima WHERE id_surat = $
 
 var IsSuratMasukExist = `SELECT COUNT(*) FROM tbl_surat WHERE id= $1;`
 
+var ReadSuratMasukByIDPenerimaAndID = `
+select 
+	ts.id, 
+	ts.tanggal, 
+	ts.nomor, 
+	ts.id_pengirim, 
+	tp."name" as pengirim,
+	ts.id_jenis,
+	tjs."name" as jenis,
+	ts.perihal, 
+	ts.keterangan
+from 
+	tbl_surat ts
+left join tbl_pengguna tp on tp.id = ts.id_pengirim
+left join tbl_jenis_surat tjs on tjs.id = ts.id_jenis
+left join tbl_penerima tp2 on tp2.id_surat = ts.id
+where tp2.id_pengguna = $1 and ts.id = $2;`
+
 var ListSuratMasukByIDPenerima = `
 select 
 	ts.id, 

@@ -26,6 +26,13 @@ func NewSuratMasukRepository() SuratMasukRepository {
 	return &repo{}
 }
 
+// type FindByIDPenggunaAndIDParams struct {
+// 	IDPengguna int64
+// 	ID         int64
+// }
+
+// func (*repo) FindByIDPenggunaAndID(arg FindByIDPenggunaAndIDParams) ()
+
 func (*repo) FindAllDesc() ([]models.ListSuratMasuk, error) {
 
 	var suratMasuk []models.ListSuratMasuk
