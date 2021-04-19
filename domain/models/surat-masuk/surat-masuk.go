@@ -4,7 +4,7 @@ import "github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 
 type SuratMasuk struct {
 	ID         int64             `json:"id" db:"id"`
-	Tanggal    string            `json:"tanggal" db:"tanggal" validate:"required"`
+	Tanggal    string            `json:"tanggal" db:"tanggal"`
 	Nomor      string            `json:"nomor" db:"nomor" validate:"required"`
 	IDPengirim int64             `json:"id_pengirim" db:"id_pengirim" validate:"required"`
 	Perihal    string            `json:"perihal" db:"perihal" validate:"required"`

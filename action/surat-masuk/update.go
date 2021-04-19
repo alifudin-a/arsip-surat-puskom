@@ -17,14 +17,26 @@ func NewUpdateSuratMasuk() *Update {
 	return &Update{}
 }
 
+func (up *Update) validate(req *models.CreateSuratMasuk, c echo.Context) (err error) {
+	if err = c.Bind(req); err != nil {
+		return
+	}
+
+	return c.Validate(req)
+}
+
 func (up *Update) UpdateSuratMasukHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
 	var req = new(models.CreateSuratMasuk)
 	var suratMasuk *models.CreateSuratMasuk
-	// t := time.Now()
 
 	err = middleware.ValidationJWT(c)
+	if err != nil {
+		return
+	}
+
+	err = up.validate(req, c)
 	if err != nil {
 		return
 	}

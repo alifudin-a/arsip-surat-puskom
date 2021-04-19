@@ -17,6 +17,14 @@ func NewCreateSuratMasuk() *Create {
 	return &Create{}
 }
 
+func (cr *Create) validate(req *models.CreateSuratMasuk, c echo.Context) (err error) {
+	if err = c.Bind(req); err != nil {
+		return
+	}
+
+	return c.Validate(req)
+}
+
 func (cr *Create) CreateSuratMasukHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
@@ -28,7 +36,8 @@ func (cr *Create) CreateSuratMasukHandler(c echo.Context) (err error) {
 		return
 	}
 
-	if err = c.Bind(req); err != nil {
+	err = cr.validate(req, c)
+	if err != nil {
 		return
 	}
 
