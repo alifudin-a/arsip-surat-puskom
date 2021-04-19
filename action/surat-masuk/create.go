@@ -34,7 +34,7 @@ func (cr *Create) CreateSuratMasukHandler(c echo.Context) (err error) {
 
 	repo := repository.NewSuratMasukRepository()
 
-	arg := builder.CreaetSuratMasuk(req)
+	arg := builder.CreateSuratMasuk(req)
 
 	suratMasuk, err = repo.Create(arg)
 	if err != nil {
