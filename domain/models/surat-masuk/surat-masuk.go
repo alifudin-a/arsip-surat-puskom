@@ -15,7 +15,7 @@ type SuratMasuk struct {
 }
 
 type Penerima struct {
-	ID         int64             `json:"-" db:"id"`
+	IDs        int64             `json:"-" db:"id"`
 	IDSurat    int64             `json:"-" db:"id_surat"`
 	IDPengguna int64             `json:"id_penerima" db:"id_pengguna"`
 	CreatedAt2 helper.NullString `json:"-,omitempty" db:"created_at"`

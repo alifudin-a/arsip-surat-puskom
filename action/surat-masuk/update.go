@@ -2,8 +2,8 @@ package action
 
 import (
 	"net/http"
-	"time"
 
+	"github.com/alifudin-a/arsip-surat-puskom/domain/builder"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat-masuk"
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/surat-masuk"
@@ -20,9 +20,9 @@ func NewUpdateSuratMasuk() *Update {
 func (up *Update) UpdateSuratMasukHandler(c echo.Context) (err error) {
 
 	var resp helper.Response
-	var req = new(models.SuratMasuk)
-	var suratMasuk *models.SuratMasuk
-	t := time.Now()
+	var req = new(models.CreateSuratMasuk)
+	var suratMasuk *models.CreateSuratMasuk
+	// t := time.Now()
 
 	err = middleware.ValidationJWT(c)
 	if err != nil {
@@ -35,16 +35,7 @@ func (up *Update) UpdateSuratMasukHandler(c echo.Context) (err error) {
 
 	repo := repository.NewSuratMasukRepository()
 
-	arg := repository.UpdateSuratMasukParams{
-		Tanggal:    req.Tanggal,
-		Nomor:      req.Nomor,
-		IDPengirim: req.IDPengirim,
-		Perihal:    req.Perihal,
-		IDJenis:    *req.IDJenis,
-		Keterangan: *req.Keterangan,
-		UpdatedAt:  t.Format(helper.LayoutTime),
-		ID:         req.ID,
-	}
+	arg := builder.UpdateSuratMasuk(req)
 
 	suratMasuk, err = repo.Update(arg)
 	if err != nil {

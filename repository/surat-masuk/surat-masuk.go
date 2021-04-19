@@ -17,7 +17,7 @@ type SuratMasukRepository interface {
 	FindAllByIDPengguna(arg ListSuratMasukByIDPenerimaParams) ([]models.ListSuratMasuk, error)
 	FindAllByIDPenggunaAsc(arg ListSuratMasukByIDPenerimaAscParams, queryparam string) ([]models.ListSuratMasuk, error)
 	Create(arg CreateSuratMasukParams) (*models.CreateSuratMasuk, error)
-	Update(arg UpdateSuratMasukParams) (*models.SuratMasuk, error)
+	Update(arg UpdateSuratMasukParams) (*models.CreateSuratMasuk, error)
 }
 
 type repo struct{}
@@ -209,7 +209,6 @@ func (r *repo) Create(arg CreateSuratMasukParams) (*models.CreateSuratMasuk, err
 	}
 
 	suratMasuk.SuratMasuk = *s1
-	// arg.SuratMasuk.ID = s1.ID
 
 	var s2 *models.Penerima
 	arg.Penerima.IDSurat = s1.ID
@@ -276,31 +275,50 @@ func (*repo) createPenerima(arg *CreateSuratMasukParams) (*models.Penerima, erro
 }
 
 type UpdateSuratMasukParams struct {
-	Tanggal    string
-	Nomor      string
-	IDPengirim int64
-	Perihal    string
-	IDJenis    int64
-	Keterangan string
-	UpdatedAt  string
-	ID         int64
+	SuratMasuk models.SuratMasuk
+	Penerima   models.Penerima
 }
 
-func (*repo) Update(arg UpdateSuratMasukParams) (*models.SuratMasuk, error) {
+func (r *repo) Update(arg UpdateSuratMasukParams) (*models.CreateSuratMasuk, error) {
 
+	var suratMasuk models.CreateSuratMasuk
+	var err error
+
+	var surat *models.SuratMasuk
+	surat, err = r.updateSurat(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	suratMasuk.SuratMasuk = *surat
+
+	var penerima *models.Penerima
+	arg.Penerima.IDSurat = surat.ID
+	arg.Penerima.CreatedAt2 = surat.CreatedAt
+	penerima, err = r.updatePenerima(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	suratMasuk.Penerima = *penerima
+
+	return &suratMasuk, nil
+}
+
+func (*repo) updateSurat(arg *UpdateSuratMasukParams) (*models.SuratMasuk, error) {
 	var suratMasuk models.SuratMasuk
 	var db = database.DB
 
 	tx := db.MustBegin()
 	err := tx.QueryRowx(query.UpdateSuratMasuk,
-		arg.Tanggal,
-		arg.Nomor,
-		arg.IDPengirim,
-		arg.Perihal,
-		arg.IDJenis,
-		arg.Keterangan,
-		arg.UpdatedAt,
-		arg.ID).StructScan(&suratMasuk)
+		arg.SuratMasuk.Tanggal,
+		arg.SuratMasuk.Nomor,
+		arg.SuratMasuk.IDPengirim,
+		arg.SuratMasuk.Perihal,
+		arg.SuratMasuk.IDJenis,
+		arg.SuratMasuk.Keterangan,
+		arg.SuratMasuk.UpdatedAt,
+		arg.SuratMasuk.ID).StructScan(&suratMasuk)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -312,4 +330,34 @@ func (*repo) Update(arg UpdateSuratMasukParams) (*models.SuratMasuk, error) {
 	}
 
 	return &suratMasuk, nil
+}
+
+func (*repo) updatePenerima(arg *UpdateSuratMasukParams) (*models.Penerima, error) {
+	var penerima models.Penerima
+	var db = database.DB
+	var err error
+
+	_, err = db.Exec("DELETE FROM tbl_penerima WHERE id_surat = $1", arg.SuratMasuk.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	tx := db.MustBegin()
+	err = tx.QueryRowx(query.UpdatePenerimaSuratMasuk,
+		arg.Penerima.IDSurat,
+		arg.Penerima.IDPengguna,
+		arg.Penerima.CreatedAt2,
+		arg.Penerima.UpdatedAt2).StructScan(&penerima)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	return &penerima, nil
+
 }

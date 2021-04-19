@@ -134,3 +134,14 @@ SET
 WHERE
 	id = $8 
 RETURNING *;`
+
+var UpdatePenerimaSuratMasuk = `
+insert 
+into 
+	tbl_penerima (
+		id_surat, 
+		id_pengguna, 
+		created_at,
+		updated_at
+	) values ($1, $2, $3, $4) returning *;
+`
