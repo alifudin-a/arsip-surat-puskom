@@ -284,30 +284,25 @@ type UpdateSuratKeluarParams struct {
 }
 
 func (r *repo) Update(arg UpdateSuratKeluarParams) (*models.CreateSuratKeluar, error) {
+
 	var suratKeluar models.CreateSuratKeluar
+	var err error
 
-	var db = database.DB
-
-	tx := db.MustBegin()
-	err := tx.QueryRowx(query.UpdateSuratKeluar,
-		arg.SuratKeluar.Tanggal,
-		arg.SuratKeluar.Nomor,
-		arg.SuratKeluar.IDPengirim,
-		arg.SuratKeluar.Perihal,
-		arg.SuratKeluar.IDJenis,
-		arg.SuratKeluar.Keterangan,
-		arg.SuratKeluar.UpdatedAt,
-		arg.SuratKeluar.ID,
-	).StructScan(&suratKeluar)
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
-	err = tx.Commit()
+	var s1 *models.SuratKeluar
+	s1, err = r.updateSurat(&arg)
 	if err != nil {
 		return nil, err
 	}
+
+	suratKeluar.SuratKeluar = *s1
+
+	var s2 []models.PenerimaSuratKeluar
+	s2, err = r.updatePenerima(&arg)
+	if err != nil {
+		return nil, err
+	}
+
+	suratKeluar.PenerimaSuratKeluar = s2
 
 	return &suratKeluar, nil
 }
@@ -373,8 +368,8 @@ func (*repo) updatePenerima(arg *UpdateSuratKeluarParams) ([]models.PenerimaSura
 		s.UpdatedAt2 = v.UpdatedAt2
 
 		p1 := i * 4
-		q += fmt.Sprintf("($%d,$%d,$%d,$%d),", p1+1, p1+2, p1+3, p1+4)
-		updateParams = append(updateParams, v.IDSurat, v.IDPengguna, v.CreatedAt2, v.UpdatedAt2)
+		q += fmt.Sprintf("($%d,unnest(array[$%d::smallint[]]),$%d,$%d),", p1+1, p1+2, p1+3, p1+4)
+		updateParams = append(updateParams, v.IDSurat, pq.Int64Array(v.IDPengguna), v.CreatedAt2, v.UpdatedAt2)
 		penerima = append(penerima, s)
 	}
 
