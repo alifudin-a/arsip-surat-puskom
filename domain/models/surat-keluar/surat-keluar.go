@@ -39,8 +39,9 @@ type SelectSuratKeluar struct {
 }
 
 type ListPenerimaSuratKeluar struct {
-	ID   int64  `json:"id" db:"id"`
-	Name string `json:"name" db:"name"`
+	ID         int64  `json:"id" db:"id"`
+	IDPengguna int64  `json:"id_pengguna" db:"id_pengguna"`
+	Name       string `json:"name" db:"name"`
 }
 
 type ListSuratKeluar struct {
