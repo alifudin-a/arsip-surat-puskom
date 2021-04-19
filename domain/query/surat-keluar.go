@@ -63,8 +63,10 @@ FROM (
 		ts.id,
 		ts.tanggal,
 		ts.nomor,
+		ts.id_pengirim,
 		tp2."name" AS pengirim,
 		ts.perihal,
+		ts.id_jenis,
 		tjs."name" AS jenis,
 		ts.keterangan,
 		(
@@ -91,8 +93,10 @@ FROM (
 		ts.id,
 		ts.tanggal,
 		ts.nomor,
+		ts.id_pengirim,
 		tp2."name" AS pengirim,
 		ts.perihal,
+		ts.id_jenis,
 		tjs."name" AS jenis,
 		ts.keterangan,
 		(
