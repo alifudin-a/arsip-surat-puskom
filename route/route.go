@@ -89,7 +89,8 @@ func InitRoute() *echo.Echo {
 	api.PUT("/surat_masuk", actionSuratMasuk.NewUpdateSuratMasuk().UpdateSuratMasukHandler)
 
 	// endpoint surat keluar
-	api.GET("/pengirim_surat_keluar/:id", actionSuratKeluar.NewListSuratKeluar().ListSuratKeluarByIDPengirim)
+	api.GET("/surat_keluar/user/:id", actionSuratKeluar.NewListSuratKeluar().ListSuratKeluarByIDPengirim)
+	api.GET("/surat_keluar/user/:id/surat/:id_s", actionSuratKeluar.NewReadSuratKeluar().ReadSuratKeluarByIDPenggunaAndID)
 	api.GET("/surat_keluar", actionSuratKeluar.NewListSuratKeluar().ListSuratKeluarHandler)
 	api.GET("/surat_keluar/:id", actionSuratKeluar.NewReadSuratKeluar().ReadSuratKeluarHandler)
 	api.DELETE("/surat_keluar/:id", actionSuratKeluar.NewDeleteSuratKeluar().DeleteSuratKeluarHandler)

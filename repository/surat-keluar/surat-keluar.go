@@ -26,12 +26,44 @@ type SuratKeluarRepository interface {
 	IsPenerimaSuratExist(arg IsPenerimaSuratKeluarExistParams) (bool, error)
 	Create(arg CreateSuratKeluarParams) (*models.CreateSuratKeluar, error)
 	Update(arg UpdateSuratKeluarParams) (*models.CreateSuratKeluar, error)
+	FindByIDandIDPengguna(arg FindByIDandIDPenggunaParams) (*models.ReadSuratKeluar, error)
 }
 
 type repo struct{}
 
 func NewSuratKeluarRepository() SuratKeluarRepository {
 	return &repo{}
+}
+
+type FindByIDandIDPenggunaParams struct {
+	IDPengguna int64
+	ID         int64
+}
+
+func (*repo) FindByIDandIDPengguna(arg FindByIDandIDPenggunaParams) (*models.ReadSuratKeluar, error) {
+
+	var suratKeluar models.ReadSuratKeluar
+	var db = database.DB
+	var jsonString types.JSONText
+
+	row, err := db.Queryx(query.ReadSuratKeluarByIDPenggunaByIDSuratKeluar, arg.IDPengguna, arg.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	for row.Next() {
+		err = row.Scan(&jsonString)
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal([]byte(jsonString), &suratKeluar)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &suratKeluar, nil
 }
 
 type ListSuratKeluarByIDPengirimParams struct {

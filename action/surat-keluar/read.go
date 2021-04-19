@@ -52,3 +52,50 @@ func (rd *Read) ReadSuratKeluarHandler(c echo.Context) (err error) {
 
 	return c.JSON(http.StatusOK, resp)
 }
+
+func (rd *Read) ReadSuratKeluarByIDPenggunaAndID(c echo.Context) (err error) {
+
+	var resp helper.Response
+	var suratKeluar *models.ReadSuratKeluar
+
+	err = middleware.ValidationJWT(c)
+	if err != nil {
+		return
+	}
+
+	id1, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		resp.Code = http.StatusBadRequest
+		resp.Message = "ID harus berupa angka!"
+		return c.JSON(http.StatusBadRequest, resp)
+	}
+
+	id2, err := strconv.Atoi(c.Param("id_s"))
+	if err != nil {
+		resp.Code = http.StatusBadRequest
+		resp.Message = "ID harus berupa angka!"
+		return c.JSON(http.StatusBadRequest, resp)
+	}
+
+	repo := repository.NewSuratKeluarRepository()
+
+	arg := repository.FindByIDandIDPenggunaParams{
+		IDPengguna: int64(id1),
+		ID:         int64(id2),
+	}
+
+	suratKeluar, err = repo.FindByIDandIDPengguna(arg)
+	if err != nil {
+		return err
+	}
+
+	resp.Code = http.StatusOK
+	resp.Message = "Berhasil Menampilkan Surat Keluar!"
+	resp.Body = map[string]interface{}{
+		"surat": suratKeluar,
+	}
+
+	return c.JSON(http.StatusOK, resp)
+
+	return nil
+}
