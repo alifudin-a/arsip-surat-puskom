@@ -9,7 +9,7 @@ type SuratKeluar struct {
 	Nomor      string            `json:"nomor" db:"nomor"`
 	IDPengirim int64             `json:"id_pengirim" db:"id_pengirim"`
 	Perihal    string            `json:"perihal" db:"perihal"`
-	IDJenis    int64             `json:"id_jenis" db:"id_jenis"`
+	IDJenis    helper.NullInt64  `json:"id_jenis" db:"id_jenis"`
 	Keterangan string            `json:"keterangan" db:"keterangan"`
 	CreatedAt  helper.NullString `json:"created_at" db:"created_at"`
 	UpdatedAt  helper.NullString `json:"updated_at,omitempty" db:"updated_at"`
