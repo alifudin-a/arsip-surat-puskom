@@ -39,10 +39,7 @@ func InitRoute() *echo.Echo {
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
 
-	// middleware validasi token jwt
-	// e.Use(validation.Validation())
-
-	// e.POST("/login", actionLogin.NewLoginHandler().LoginHandler)
+	e.GET("/", accessible)
 
 	// endpoint group
 	api := e.Group("/api")
@@ -100,4 +97,8 @@ func InitRoute() *echo.Echo {
 	e.Logger.Fatal(e.Start(":9000"))
 
 	return e
+}
+
+func accessible(c echo.Context) (err error) {
+	return c.HTML(http.StatusOK, "<h3>Accessible</h3>")
 }
