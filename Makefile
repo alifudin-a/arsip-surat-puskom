@@ -2,7 +2,7 @@ run:
 	go run main.go
 
 build:
-	go build -o bin/arsip-surat-unggulan
+	CGO_ENABLED=0 go build -o bin/arsip-surat-unggulan
 
 exec:
 	./bin/arsip-surat-unggulan
