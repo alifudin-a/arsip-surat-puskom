@@ -3,9 +3,9 @@ module github.com/alifudin-a/arsip-surat-puskom
 go 1.16
 
 require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-playground/validator/v10 v10.5.0
+	github.com/heroku/x v0.0.28
 	github.com/jmoiron/sqlx v1.3.3
 	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo/v4 v4.2.2

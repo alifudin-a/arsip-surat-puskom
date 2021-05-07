@@ -1,0 +1,11 @@
+{
+    "name": "Arsip Surat Unggulan",
+    "description": "Backend Aplikasi Surat Unggulan",
+    "keywords": [
+      "arsip-surat-unggulan",
+      "arsip-surat-puskom",
+      "go"
+    ],
+    "website": "https://github.com/alifudin-a/arsip-surat-puskom",
+    "repository": "https://github.com/alifudin-a/arsip-surat-puskom"
+}

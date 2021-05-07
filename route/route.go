@@ -1,7 +1,9 @@
 package route
 
 import (
+	"log"
 	"net/http"
+	"os"
 
 	actionJenisSurat "github.com/alifudin-a/arsip-surat-puskom/action/jenis-surat"
 	actionLogin "github.com/alifudin-a/arsip-surat-puskom/action/login"
@@ -12,11 +14,19 @@ import (
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	validator "github.com/go-playground/validator/v10"
+	_ "github.com/heroku/x/hmetrics/onload"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
 func InitRoute() *echo.Echo {
+
+	// app port
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Println("Missing application port!")
+	}
+
 	e := echo.New()
 
 	// validator json body
@@ -94,7 +104,7 @@ func InitRoute() *echo.Echo {
 	api.POST("/surat_keluar", actionSuratKeluar.NewCreateSuratKeluar().CreateSuratKeluarHandler)
 	api.PUT("/surat_keluar", actionSuratKeluar.NewUpdateSuratKeluar().UpdateSuratHandler)
 
-	e.Logger.Fatal(e.Start(":9000"))
+	e.Logger.Fatal(e.Start(":" + port))
 
 	return e
 }
