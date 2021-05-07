@@ -10,7 +10,7 @@ exec:
 start: build exec
 
 develop:
-	git push origin develop
+	git push origin
 
 gpoh:
 	git push origin heroku
