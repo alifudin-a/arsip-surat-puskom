@@ -10,10 +10,10 @@ exec:
 start: build exec
 
 develop:
-	git push origin
+	git push origin develop
 
 gpo:
-	git push origin heroku
+	git push origin
 
 gphm:
 	git push heroku master
