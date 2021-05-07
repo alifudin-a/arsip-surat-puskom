@@ -1,1 +1,1 @@
-web: arsip-surat-unggulan
+web: bin/arsip-surat-unggulan

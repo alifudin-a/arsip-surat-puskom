@@ -2,10 +2,10 @@ run:
 	go run main.go
 
 build:
-	go build -o arsip-surat-unggulan
+	go build -o bin/arsip-surat-unggulan
 
 exec:
-	./arsip-surat-puskom
+	./bin/arsip-surat-unggulan
 
 start: build exec
 

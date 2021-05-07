@@ -3,4 +3,4 @@ build:
     - go
 
 run:
-  web: arsip-surat-unggulan
+  web: bin/arsip-surat-unggulan
