@@ -12,7 +12,7 @@ start: build exec
 develop:
 	git push origin
 
-gpoh:
+gpo:
 	git push origin heroku
 
 gphm:
