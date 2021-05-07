@@ -15,7 +15,10 @@ develop:
 gpo:
 	git push origin
 
+gpom:
+	git push origin master
+
 gphm:
 	git push heroku master
 
-push: gpoh gphm
+push: gpom gphm
