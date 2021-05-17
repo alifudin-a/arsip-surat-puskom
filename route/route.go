@@ -43,9 +43,9 @@ func InitRoute() *echo.Echo {
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, echo.HeaderContentLength, echo.HeaderAcceptEncoding, echo.HeaderAccessControlAllowOrigin,
-			echo.HeaderAccessControlAllowHeaders, echo.HeaderContentDisposition, "api-key", "user-token"},
+			echo.HeaderAccessControlAllowHeaders, echo.HeaderContentDisposition, "app-key", "user-token"},
 		ExposeHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization, echo.HeaderContentLength, echo.HeaderAcceptEncoding, echo.HeaderAccessControlAllowOrigin,
-			echo.HeaderAccessControlAllowHeaders, echo.HeaderContentDisposition, "api-key", "user-token"},
+			echo.HeaderAccessControlAllowHeaders, echo.HeaderContentDisposition, "app-key", "user-token"},
 		AllowMethods: []string{http.MethodGet, http.MethodHead, http.MethodPut, http.MethodPatch, http.MethodPost, http.MethodDelete},
 	}))
 
