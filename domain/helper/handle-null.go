@@ -49,5 +49,5 @@ func (i NullInt64) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	return i, nil
+	return int64(i), nil
 }
