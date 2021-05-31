@@ -12,9 +12,9 @@ import (
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	validator "github.com/go-playground/validator/v10"
-	_ "github.com/heroku/x/hmetrics/onload"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	// _ "github.com/heroku/x/hmetrics/onload"
 )
 
 func InitRoute() *echo.Echo {
