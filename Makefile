@@ -1,11 +1,16 @@
 gorun:
 	go run main.go
 
+#gobuild:
+#CGO_ENABLED=0 go build -o bin/arsip-surat-unggulan
+#exec:
+#./bin/arsip-surat-unggulan
+
 gobuild:
-	CGO_ENABLED=0 go build -o bin/arsip-surat-unggulan
+	go build -o arsip-surat-unggulan
 
 exec:
-	./bin/arsip-surat-unggulan
+	./arsip-surat-unggulan
 
 startapp: gobuild exec
 
