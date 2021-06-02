@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	database "github.com/alifudin-a/arsip-surat-puskom/database/psql"
@@ -10,6 +13,7 @@ import (
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat-keluar"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/query"
 	"github.com/jmoiron/sqlx/types"
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/lib/pq"
 	errs "github.com/pkg/errors"
 )
@@ -454,9 +458,34 @@ func (r *repo) Create(arg CreateSuratKeluarParams) (*models.CreateSuratKeluar, e
 func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, error) {
 	var surat models.SuratKeluar
 	var db = database.DB
+	var err error
+
+	uploadPayload := arg.SuratKeluar.Upload
+	str := strings.SplitAfter(*uploadPayload, ",")
+	extFile := helper.GetExtFile(str[0])
+
+	var byteUpload []byte
+
+	if extFile == "png" {
+		byteUpload, err = base64.StdEncoding.WithPadding(base64.NoPadding).DecodeString(str[1]) //WithPadding(base64.NoPadding)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		byteUpload, err = base64.StdEncoding.DecodeString(str[1])
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	filename := "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
+
+	fullpath := "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
+
+	arg.SuratKeluar.Upload = &fullpath
 
 	tx := db.MustBegin()
-	err := tx.QueryRowx(query.CreateSuratKeluar,
+	err = tx.QueryRowx(query.CreateSuratKeluar,
 		arg.SuratKeluar.Tanggal,
 		arg.SuratKeluar.Nomor,
 		arg.SuratKeluar.IDPengirim,
@@ -464,6 +493,7 @@ func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, e
 		arg.SuratKeluar.IDJenis,
 		arg.SuratKeluar.Keterangan,
 		arg.SuratKeluar.CreatedAt,
+		arg.SuratKeluar.Upload,
 	).StructScan(&surat)
 
 	if err != nil {
@@ -472,6 +502,11 @@ func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, e
 	}
 
 	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	err = helper.Upload(byteUpload, filename)
 	if err != nil {
 		return nil, err
 	}
