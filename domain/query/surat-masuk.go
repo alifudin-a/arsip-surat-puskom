@@ -10,7 +10,8 @@ select
 	ts.id_jenis,
 	tjs."name" as jenis,
 	ts.perihal, 
-	ts.keterangan 
+	ts.keterangan,
+	ts.upload
 from 
 	tbl_surat ts
 left join tbl_pengguna tp on tp.id = ts.id_pengirim
@@ -27,7 +28,8 @@ select
 	ts.id_jenis,
 	tjs."name" as jenis,
 	ts.perihal, 
-	ts.keterangan 
+	ts.keterangan,
+	ts.upload 
 from 
 	tbl_surat ts
 left join tbl_pengguna tp on tp.id = ts.id_pengirim
@@ -44,7 +46,8 @@ select
 	ts.id_jenis,
 	tjs."name" as jenis,
 	ts.perihal, 
-	ts.keterangan 
+	ts.keterangan,
+	ts.upload 
 from 
 	tbl_surat ts
 left join tbl_pengguna tp on tp.id = ts.id_pengirim
@@ -69,7 +72,8 @@ select
 	ts.id_jenis,
 	tjs."name" as jenis,
 	ts.perihal, 
-	ts.keterangan
+	ts.keterangan,
+	ts.upload
 from 
 	tbl_surat ts
 left join tbl_pengguna tp on tp.id = ts.id_pengirim
@@ -87,7 +91,8 @@ select
 	ts.id_jenis,
 	tjs."name" as jenis,
 	ts.perihal, 
-	ts.keterangan
+	ts.keterangan,
+	ts.upload
 from 
 	tbl_surat ts
 left join tbl_pengguna tp on tp.id = ts.id_pengirim
@@ -105,7 +110,8 @@ select
 	ts.id_jenis,
 	tjs."name" as jenis,
 	ts.perihal, 
-	ts.keterangan
+	ts.keterangan,
+	ts.upload
 from 
 	tbl_surat ts
 left join tbl_pengguna tp on tp.id = ts.id_pengirim

@@ -259,7 +259,7 @@ func (*repo) createSurat(arg *CreateSuratMasukParams) (*models.SuratMasuk, error
 		}
 	}
 
-	filename := "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
+	filename := "surat_masuk_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
 	fullpath := "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
 
 	arg.SuratMasuk.Upload = &fullpath
@@ -376,7 +376,7 @@ func (*repo) updateSurat(arg *UpdateSuratMasukParams) (*models.SuratMasuk, error
 			}
 		}
 
-		filename = "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
+		filename = "surat_masuk_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
 		fullpath = "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
 	}
 
