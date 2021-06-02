@@ -346,9 +346,37 @@ func (r *repo) Update(arg UpdateSuratKeluarParams) (*models.CreateSuratKeluar, e
 func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, error) {
 	var surat models.SuratKeluar
 	var db = database.DB
+	var err error
+
+	var byteUpload []byte
+	var filename string
+	var fullpath string
+
+	uploadPayload := arg.SuratKeluar.Upload
+	if uploadPayload != nil {
+		str := strings.SplitAfter(*uploadPayload, ",")
+		extFile := helper.GetExtFile(str[0])
+
+		if extFile == "png" {
+			byteUpload, err = base64.StdEncoding.WithPadding(base64.NoPadding).DecodeString(str[1]) //WithPadding(base64.NoPadding)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			byteUpload, err = base64.StdEncoding.DecodeString(str[1])
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		filename = "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
+		fullpath = "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
+	}
+
+	arg.SuratKeluar.Upload = &fullpath
 
 	tx := db.MustBegin()
-	err := tx.QueryRowx(query.UpdateSurat,
+	err = tx.QueryRowx(query.UpdateSuratKeluar,
 		arg.SuratKeluar.Tanggal,
 		arg.SuratKeluar.Nomor,
 		arg.SuratKeluar.IDPengirim,
@@ -356,6 +384,7 @@ func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, err
 		arg.SuratKeluar.IDJenis,
 		arg.SuratKeluar.Keterangan,
 		arg.SuratKeluar.UpdatedAt,
+		arg.SuratKeluar.Upload,
 		arg.SuratKeluar.ID,
 	).StructScan(&surat)
 	if err != nil {
@@ -364,6 +393,11 @@ func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, err
 	}
 
 	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	err = helper.Upload(byteUpload, filename)
 	if err != nil {
 		return nil, err
 	}

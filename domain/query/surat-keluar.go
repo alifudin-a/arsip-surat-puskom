@@ -211,9 +211,10 @@ var UpdateSuratKeluar = `
 		perihal = $4,
 		id_jenis = $5,
 		keterangan = $6,
-		updated_at = $7
+		updated_at = $7,
+		upload = $8
 	WHERE
-		id = $8 
+		id = $9
 	RETURNING *;`
 
 var CreatePenerimaSuratKeluar = `
