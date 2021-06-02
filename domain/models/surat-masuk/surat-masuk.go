@@ -12,6 +12,7 @@ type SuratMasuk struct {
 	Keterangan *string           `json:"keterangan" db:"keterangan"`
 	CreatedAt  helper.NullString `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt  helper.NullString `json:"updated_at,omitempty" db:"updated_at"`
+	Upload     *string           `json:"upload,omitempty" db:"upload"`
 }
 
 type Penerima struct {
@@ -34,6 +35,7 @@ type ListSuratMasuk struct {
 	Keterangan *string           `json:"keterangan" db:"keterangan"`
 	CreatedAt  helper.NullString `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt  helper.NullString `json:"updated_at,omitempty" db:"updated_at"`
+	Upload     *string           `json:"upload,omitempty" db:"upload"`
 }
 
 type CreateSuratMasuk struct {

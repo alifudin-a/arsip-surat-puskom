@@ -13,6 +13,7 @@ type SuratKeluar struct {
 	Keterangan helper.NullString `json:"keterangan" db:"keterangan"`
 	CreatedAt  helper.NullString `json:"created_at" db:"created_at"`
 	UpdatedAt  helper.NullString `json:"updated_at,omitempty" db:"updated_at"`
+	Upload     *string           `json:"upload,omitempty" db:"upload"`
 }
 
 //PenerimaSuratKeluar : struct untuk create dan update
@@ -36,6 +37,7 @@ type SelectSuratKeluar struct {
 	Keterangan *string `json:"keterangan,omitempty" db:"keterangan"`
 	CreatedAt  *string `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt  *string `json:"updated_at,omitempty" db:"updated_at"`
+	Upload     *string `json:"upload,omitempty" db:"upload"`
 }
 
 type ListPenerimaSuratKeluar struct {
