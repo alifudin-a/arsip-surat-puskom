@@ -19,6 +19,7 @@ func CreateSuratKeluar(params *models.CreateSuratKeluar) repository.CreateSuratK
 	res.SuratKeluar.IDJenis = params.IDJenis
 	res.SuratKeluar.Keterangan = params.Keterangan
 	res.SuratKeluar.CreatedAt = helper.NullString(t.Format(helper.LayoutTime))
+	res.SuratKeluar.Upload = params.Upload
 
 	res.PenerimaSuratKeluar = params.PenerimaSuratKeluar
 
@@ -38,6 +39,7 @@ func UpdateSuratKeluar(params *models.CreateSuratKeluar) repository.UpdateSuratK
 	res.SuratKeluar.IDJenis = params.IDJenis
 	res.SuratKeluar.Keterangan = params.Keterangan
 	res.SuratKeluar.UpdatedAt = helper.NullString(t.Format(helper.LayoutTime))
+	res.SuratKeluar.Upload = params.Upload
 
 	res.PenerimaSuratKeluar = params.PenerimaSuratKeluar
 
