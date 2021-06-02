@@ -11,6 +11,7 @@ FROM (
 		ts.perihal,
 		tjs."name" AS jenis,
 		ts.keterangan,
+		ts.upload,
 		(
 			SELECT array_to_json(array_agg(row_to_json(d)))
 			FROM (
@@ -39,6 +40,7 @@ FROM (
 		ts.perihal,
 		tjs."name" AS jenis,
 		ts.keterangan,
+		ts.upload,
 		(
 			SELECT array_to_json(array_agg(row_to_json(d)))
 			FROM (
@@ -69,6 +71,7 @@ FROM (
 		ts.id_jenis,
 		tjs."name" AS jenis,
 		ts.keterangan,
+		ts.upload,
 		(
 			SELECT array_to_json(array_agg(row_to_json(d)))
 			FROM (
@@ -100,6 +103,7 @@ FROM (
 		ts.id_jenis,
 		tjs."name" AS jenis,
 		ts.keterangan,
+		ts.upload,
 		(
 			SELECT array_to_json(array_agg(row_to_json(d)))
 			FROM (
@@ -131,6 +135,7 @@ FROM (
 		ts.id_jenis,
 		tjs."name" AS jenis,
 		ts.keterangan,
+		ts.upload,
 		(
 			SELECT array_to_json(array_agg(row_to_json(d)))
 			FROM (
@@ -161,6 +166,7 @@ FROM (
 		ts.perihal,
 		tjs."name" AS jenis,
 		ts.keterangan,
+		ts.upload,
 		(
 			SELECT array_to_json(array_agg(row_to_json(d)))
 			FROM (
