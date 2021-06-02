@@ -1,9 +1,16 @@
 package repository
 
 import (
+	"encoding/base64"
+	"os"
+	"strings"
+	"time"
+
 	database "github.com/alifudin-a/arsip-surat-puskom/database/psql"
+	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat-masuk"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/query"
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type SuratMasukRepository interface {
@@ -232,22 +239,53 @@ func (r *repo) Create(arg CreateSuratMasukParams) (*models.CreateSuratMasuk, err
 func (*repo) createSurat(arg *CreateSuratMasukParams) (*models.SuratMasuk, error) {
 	var suratMasuk models.SuratMasuk
 	var db = database.DB
+	var err error
+
+	uploadPayload := arg.SuratMasuk.Upload
+	str := strings.SplitAfter(*uploadPayload, ",")
+	extFile := helper.GetExtFile(str[0])
+
+	var byteUpload []byte
+
+	if extFile == "png" {
+		byteUpload, err = base64.StdEncoding.WithPadding(base64.NoPadding).DecodeString(str[1]) //WithPadding(base64.NoPadding)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		byteUpload, err = base64.StdEncoding.DecodeString(str[1])
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	filename := "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
+	fullpath := "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
+
+	arg.SuratMasuk.Upload = &fullpath
 
 	tx := db.MustBegin()
-	err := tx.QueryRowx(query.CreateSuratMasuk,
+	err = tx.QueryRowx(query.CreateSuratMasuk,
 		arg.SuratMasuk.Tanggal,
 		arg.SuratMasuk.Nomor,
 		arg.SuratMasuk.IDPengirim,
 		arg.SuratMasuk.Perihal,
 		arg.SuratMasuk.IDJenis,
 		arg.SuratMasuk.Keterangan,
-		arg.SuratMasuk.CreatedAt).StructScan(&suratMasuk)
+		arg.SuratMasuk.CreatedAt,
+		arg.SuratMasuk.Upload,
+	).StructScan(&suratMasuk)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
 	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	err = helper.Upload(byteUpload, filename)
 	if err != nil {
 		return nil, err
 	}
@@ -315,9 +353,37 @@ func (r *repo) Update(arg UpdateSuratMasukParams) (*models.CreateSuratMasuk, err
 func (*repo) updateSurat(arg *UpdateSuratMasukParams) (*models.SuratMasuk, error) {
 	var suratMasuk models.SuratMasuk
 	var db = database.DB
+	var err error
+
+	var byteUpload []byte
+	var filename string
+	var fullpath string
+
+	uploadPayload := arg.SuratMasuk.Upload
+	if uploadPayload != nil {
+		str := strings.SplitAfter(*uploadPayload, ",")
+		extFile := helper.GetExtFile(str[0])
+
+		if extFile == "png" {
+			byteUpload, err = base64.StdEncoding.WithPadding(base64.NoPadding).DecodeString(str[1]) //WithPadding(base64.NoPadding)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			byteUpload, err = base64.StdEncoding.DecodeString(str[1])
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		filename = "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
+		fullpath = "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
+	}
+
+	arg.SuratMasuk.Upload = &fullpath
 
 	tx := db.MustBegin()
-	err := tx.QueryRowx(query.UpdateSuratMasuk,
+	err = tx.QueryRowx(query.UpdateSuratMasuk,
 		arg.SuratMasuk.Tanggal,
 		arg.SuratMasuk.Nomor,
 		arg.SuratMasuk.IDPengirim,
@@ -325,13 +391,20 @@ func (*repo) updateSurat(arg *UpdateSuratMasukParams) (*models.SuratMasuk, error
 		arg.SuratMasuk.IDJenis,
 		arg.SuratMasuk.Keterangan,
 		arg.SuratMasuk.UpdatedAt,
-		arg.SuratMasuk.ID).StructScan(&suratMasuk)
+		arg.SuratMasuk.Upload,
+		arg.SuratMasuk.ID,
+	).StructScan(&suratMasuk)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
 	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+
+	err = helper.Upload(byteUpload, filename)
 	if err != nil {
 		return nil, err
 	}

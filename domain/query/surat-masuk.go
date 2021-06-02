@@ -123,9 +123,10 @@ var CreateSuratMasuk = `
 				perihal, 
 				id_jenis, 
 				keterangan, 
-				created_at
+				created_at,
+				upload
 			) values(
-				$1,$2,$3,$4,$5,$6,$7
+				$1,$2,$3,$4,$5,$6,$7,$8
 			) RETURNING *;`
 
 var CreatePenerimaSuratMasuk = `
@@ -148,9 +149,10 @@ SET
 	perihal = $4,
 	id_jenis = $5,
 	keterangan = $6,
-	updated_at = $7
+	updated_at = $7,
+	upload = $8
 WHERE
-	id = $8 
+	id = $9
 RETURNING *;`
 
 var UpdatePenerimaSuratMasuk = `

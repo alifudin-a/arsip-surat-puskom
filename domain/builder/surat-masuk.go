@@ -19,6 +19,7 @@ func CreateSuratMasuk(params *models.CreateSuratMasuk) repository.CreateSuratMas
 	res.SuratMasuk.IDJenis = params.IDJenis
 	res.SuratMasuk.Keterangan = params.Keterangan
 	res.SuratMasuk.CreatedAt = helper.NullString(t.Format(helper.LayoutTime))
+	res.SuratMasuk.Upload = params.Upload
 
 	res.Penerima.IDSurat = params.IDSurat
 	res.Penerima.IDPengguna = params.IDPengguna
@@ -39,6 +40,7 @@ func UpdateSuratMasuk(params *models.CreateSuratMasuk) repository.UpdateSuratMas
 	res.SuratMasuk.IDJenis = params.IDJenis
 	res.SuratMasuk.Keterangan = params.Keterangan
 	res.SuratMasuk.UpdatedAt = helper.NullString(t.Format(helper.LayoutTime))
+	res.SuratMasuk.Upload = params.Upload
 
 	res.Penerima.IDSurat = params.IDSurat
 	res.Penerima.IDPengguna = params.IDPengguna
