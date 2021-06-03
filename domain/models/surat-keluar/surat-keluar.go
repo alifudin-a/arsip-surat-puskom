@@ -13,7 +13,7 @@ type SuratKeluar struct {
 	Keterangan helper.NullString `json:"keterangan" db:"keterangan"`
 	CreatedAt  helper.NullString `json:"created_at" db:"created_at"`
 	UpdatedAt  helper.NullString `json:"updated_at,omitempty" db:"updated_at"`
-	Upload     *string           `json:"upload,omitempty" db:"upload"`
+	Upload     helper.NullString `json:"upload,omitempty" db:"upload"`
 }
 
 //PenerimaSuratKeluar : struct untuk create dan update
@@ -26,18 +26,18 @@ type PenerimaSuratKeluar struct {
 }
 
 type SelectSuratKeluar struct {
-	ID         int64   `json:"id" db:"id"`
-	Tanggal    string  `json:"tanggal" db:"tanggal" validate:"required"`
-	Nomor      string  `json:"nomor" db:"nomor" validate:"required"`
-	IDPengirim int64   `json:"id_pengirim,omitempty" db:"id_pengirim"`
-	Pengirim   string  `json:"pengirim,omitempty" db:"pengirim"`
-	Perihal    string  `json:"perihal" db:"perihal" validate:"required"`
-	IDJenis    *int64  `json:"id_jenis,omitempty" db:"id_jenis"`
-	Jenis      *string `json:"jenis,omitempty" db:"jenis"`
-	Keterangan *string `json:"keterangan,omitempty" db:"keterangan"`
-	CreatedAt  *string `json:"created_at,omitempty" db:"created_at"`
-	UpdatedAt  *string `json:"updated_at,omitempty" db:"updated_at"`
-	Upload     *string `json:"upload,omitempty" db:"upload"`
+	ID         int64             `json:"id" db:"id"`
+	Tanggal    string            `json:"tanggal" db:"tanggal" validate:"required"`
+	Nomor      string            `json:"nomor" db:"nomor" validate:"required"`
+	IDPengirim int64             `json:"id_pengirim,omitempty" db:"id_pengirim"`
+	Pengirim   string            `json:"pengirim,omitempty" db:"pengirim"`
+	Perihal    string            `json:"perihal" db:"perihal" validate:"required"`
+	IDJenis    *int64            `json:"id_jenis,omitempty" db:"id_jenis"`
+	Jenis      *string           `json:"jenis,omitempty" db:"jenis"`
+	Keterangan *string           `json:"keterangan,omitempty" db:"keterangan"`
+	CreatedAt  *string           `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt  *string           `json:"updated_at,omitempty" db:"updated_at"`
+	Upload     helper.NullString `json:"upload,omitempty" db:"upload"`
 }
 
 type ListPenerimaSuratKeluar struct {

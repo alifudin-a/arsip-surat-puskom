@@ -1,6 +1,8 @@
 package models
 
-import "github.com/alifudin-a/arsip-surat-puskom/domain/helper"
+import (
+	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
+)
 
 type SuratMasuk struct {
 	ID         int64             `json:"id" db:"id"`
@@ -12,7 +14,7 @@ type SuratMasuk struct {
 	Keterangan *string           `json:"keterangan" db:"keterangan"`
 	CreatedAt  helper.NullString `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt  helper.NullString `json:"updated_at,omitempty" db:"updated_at"`
-	Upload     *string           `json:"upload,omitempty" db:"upload"`
+	Upload     helper.NullString `json:"upload,omitempty" db:"upload"`
 }
 
 type Penerima struct {
@@ -35,7 +37,7 @@ type ListSuratMasuk struct {
 	Keterangan *string           `json:"keterangan" db:"keterangan"`
 	CreatedAt  helper.NullString `json:"created_at,omitempty" db:"created_at"`
 	UpdatedAt  helper.NullString `json:"updated_at,omitempty" db:"updated_at"`
-	Upload     *string           `json:"upload,omitempty" db:"upload"`
+	Upload     helper.NullString `json:"upload,omitempty" db:"upload"`
 }
 
 type CreateSuratMasuk struct {

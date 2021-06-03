@@ -353,8 +353,8 @@ func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, err
 	var fullpath string
 
 	uploadPayload := arg.SuratKeluar.Upload
-	if uploadPayload != nil {
-		str := strings.SplitAfter(*uploadPayload, ",")
+	if uploadPayload != "" {
+		str := strings.SplitAfter(string(*&uploadPayload), ",")
 		extFile := helper.GetExtFile(str[0])
 
 		if extFile == "png" {
@@ -371,9 +371,14 @@ func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, err
 
 		filename = "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
 		fullpath = "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
-	}
 
-	arg.SuratKeluar.Upload = &fullpath
+		arg.SuratKeluar.Upload = helper.NullString(*&fullpath)
+
+		err = helper.Upload(byteUpload, filename)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	tx := db.MustBegin()
 	err = tx.QueryRowx(query.UpdateSuratKeluar,
@@ -393,11 +398,6 @@ func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, err
 	}
 
 	err = tx.Commit()
-	if err != nil {
-		return nil, err
-	}
-
-	err = helper.Upload(byteUpload, filename)
 	if err != nil {
 		return nil, err
 	}
@@ -494,29 +494,37 @@ func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, e
 	var db = database.DB
 	var err error
 
-	uploadPayload := arg.SuratKeluar.Upload
-	str := strings.SplitAfter(*uploadPayload, ",")
-	extFile := helper.GetExtFile(str[0])
-
 	var byteUpload []byte
 
-	if extFile == "png" {
-		byteUpload, err = base64.StdEncoding.WithPadding(base64.NoPadding).DecodeString(str[1]) //WithPadding(base64.NoPadding)
-		if err != nil {
-			return nil, err
+	uploadPayload := arg.SuratKeluar.Upload
+
+	if uploadPayload != "" {
+		str := strings.SplitAfter(string(*&uploadPayload), ",")
+		extFile := helper.GetExtFile(str[0])
+
+		if extFile == "png" {
+			byteUpload, err = base64.StdEncoding.WithPadding(base64.NoPadding).DecodeString(str[1]) //WithPadding(base64.NoPadding)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			byteUpload, err = base64.StdEncoding.DecodeString(str[1])
+			if err != nil {
+				return nil, err
+			}
 		}
-	} else {
-		byteUpload, err = base64.StdEncoding.DecodeString(str[1])
+
+		filename := "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
+
+		fullpath := "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
+
+		arg.SuratKeluar.Upload = helper.NullString(*&fullpath)
+
+		err = helper.Upload(byteUpload, filename)
 		if err != nil {
 			return nil, err
 		}
 	}
-
-	filename := "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
-
-	fullpath := "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
-
-	arg.SuratKeluar.Upload = &fullpath
 
 	tx := db.MustBegin()
 	err = tx.QueryRowx(query.CreateSuratKeluar,
@@ -536,11 +544,6 @@ func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, e
 	}
 
 	err = tx.Commit()
-	if err != nil {
-		return nil, err
-	}
-
-	err = helper.Upload(byteUpload, filename)
 	if err != nil {
 		return nil, err
 	}
