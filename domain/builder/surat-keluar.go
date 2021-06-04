@@ -12,7 +12,7 @@ func CreateSuratKeluar(params *models.CreateSuratKeluar) repository.CreateSuratK
 	var res repository.CreateSuratKeluarParams
 
 	t := time.Now()
-	res.SuratKeluar.Tanggal = t.Format(helper.LayoutTime2)
+	res.SuratKeluar.Tanggal = params.Tanggal
 	res.SuratKeluar.Nomor = params.Nomor
 	res.SuratKeluar.IDPengirim = params.IDPengirim
 	res.SuratKeluar.Perihal = params.Perihal
@@ -32,7 +32,7 @@ func UpdateSuratKeluar(params *models.CreateSuratKeluar) repository.UpdateSuratK
 	t := time.Now()
 
 	res.SuratKeluar.ID = params.ID
-	res.SuratKeluar.Tanggal = t.Format(helper.LayoutTime2)
+	res.SuratKeluar.Tanggal = params.Tanggal
 	res.SuratKeluar.Nomor = params.Nomor
 	res.SuratKeluar.IDPengirim = params.IDPengirim
 	res.SuratKeluar.Perihal = params.Perihal
