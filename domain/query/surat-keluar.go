@@ -141,7 +141,6 @@ FROM (
 			FROM (
 				SELECT 
 					tp.id as id,
-					tp.id_pengguna,
 					tp3."name" as name
 				FROM tbl_penerima tp
 				JOIN tbl_pengguna tp3 on tp3.id = tp.id_pengguna 
