@@ -32,6 +32,26 @@ func Upload(file []byte, filename string) (err error) {
 	return nil
 }
 
+// DeleteFile: delete file from ftp
+func DeleteFile(filename string) (err error) {
+
+	conn, err := connectFTP()
+	if err != nil {
+		logrus.Error("Failed to connect ftp server : ", err)
+		return
+	}
+
+	err = conn.Delete(filename)
+	if err != nil {
+		logrus.Error("Failed to connect ftp server : ", err)
+		return
+	}
+
+	logrus.Info("File ", filename, "was deleted!")
+
+	return nil
+}
+
 // connectFTP connecting to ftp server
 func connectFTP() (*ftp.ServerConn, error) {
 	host := fmt.Sprintf("%s:%s", os.Getenv("ftp_addr"), os.Getenv("ftp_port"))
