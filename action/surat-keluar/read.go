@@ -1,9 +1,11 @@
 package action
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
+	rds "github.com/alifudin-a/arsip-surat-puskom/database/redis"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat-keluar"
 	repository "github.com/alifudin-a/arsip-surat-puskom/repository/surat-keluar"
@@ -42,6 +44,13 @@ func (rd *Read) ReadSuratKeluarHandler(c echo.Context) (err error) {
 	suratKeluar, err = repo.FindByID(arg)
 	if err != nil {
 		return err
+	}
+
+	res, _ := rds.RdGet(suratKeluar.Perihal)
+	if res != "" {
+		suratKeluar.Upload = helper.NullString(res)
+	} else {
+		log.Println("Empty Key")
 	}
 
 	resp.Code = http.StatusOK
