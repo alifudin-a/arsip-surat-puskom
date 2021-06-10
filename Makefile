@@ -49,3 +49,17 @@ createlog:
 	@touch /var/log/$(appname).log
 log: 
 	tail -f /var/log/$(appname).log
+
+
+##docker-compose##
+dcup:
+	docker-compose up -d
+
+dcdown:
+	docker-compose down
+
+dcstart:
+	docker-compose start
+
+dcstop:
+	docker-compose stop
