@@ -9,6 +9,7 @@ import (
 	"time"
 
 	database "github.com/alifudin-a/arsip-surat-puskom/database/psql"
+	rd "github.com/alifudin-a/arsip-surat-puskom/database/redis"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/helper"
 	models "github.com/alifudin-a/arsip-surat-puskom/domain/models/surat-keluar"
 	"github.com/alifudin-a/arsip-surat-puskom/domain/query"
@@ -354,6 +355,7 @@ func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, err
 
 	uploadPayload := arg.SuratKeluar.Upload
 	if uploadPayload != "" {
+
 		str := strings.SplitAfter(string(*&uploadPayload), ",")
 		extFile := helper.GetExtFile(str[0])
 
@@ -499,6 +501,12 @@ func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, e
 	uploadPayload := arg.SuratKeluar.Upload
 
 	if uploadPayload != "" {
+
+		err = rd.RdSet(arg.SuratKeluar.Perihal, string(uploadPayload), 0)
+		if err != nil {
+			return nil, err
+		}
+
 		str := strings.SplitAfter(string(*&uploadPayload), ",")
 		extFile := helper.GetExtFile(str[0])
 
@@ -514,7 +522,7 @@ func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, e
 			}
 		}
 
-		filename := "surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
+		filename := "UNTUK_DIHAPUS_surat_keluar_" + time.Now().Format(helper.LayoutTime3) + "." + extFile
 
 		fullpath := "http://" + os.Getenv("ftp_addr") + ":" + os.Getenv("ftp_port_image") + "/" + filename
 
