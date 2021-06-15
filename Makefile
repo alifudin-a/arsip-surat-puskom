@@ -63,3 +63,22 @@ dcstart:
 
 dcstop:
 	docker-compose stop
+
+dcrestart: dcdown dcup
+
+#Dockerfile#
+dbuild:
+	docker build . -t arsip-surat-unggulan
+
+dprune:
+	docker image prune -f
+	
+logs:
+	docker logs arsip-surat-unggulan -f
+
+#Run Docker#
+dredeploy: dcdown dbuild dprune dcup
+
+#Psql#
+bash:
+	docker exec -it psql-arsip-surat-unggulan bash
