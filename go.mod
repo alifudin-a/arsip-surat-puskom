@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/fatih/structs v1.1.0
 	github.com/go-playground/validator/v10 v10.5.0
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/jlaffaye/ftp v0.0.0-20210307004419-5d4190119067
