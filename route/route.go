@@ -6,7 +6,8 @@ import (
 	actionJenisSurat "github.com/alifudin-a/arsip-surat-puskom/action/jenis-surat"
 	actionLogin "github.com/alifudin-a/arsip-surat-puskom/action/login"
 	actionPenerima "github.com/alifudin-a/arsip-surat-puskom/action/penerima"
-	actionSurat "github.com/alifudin-a/arsip-surat-puskom/action/surat"
+
+	// actionSurat "github.com/alifudin-a/arsip-surat-puskom/action/surat"
 	actionSuratKeluar "github.com/alifudin-a/arsip-surat-puskom/action/surat-keluar"
 	actionSuratMasuk "github.com/alifudin-a/arsip-surat-puskom/action/surat-masuk"
 	actionUser "github.com/alifudin-a/arsip-surat-puskom/action/user"
@@ -18,12 +19,6 @@ import (
 )
 
 func InitRoute() *echo.Echo {
-
-	// app port
-	// port := os.Getenv("PORT")
-	// if port == "" {
-	// 	log.Println("Missing application port!")
-	// }
 
 	e := echo.New()
 
@@ -77,13 +72,6 @@ func InitRoute() *echo.Echo {
 	api.DELETE("/penerima/:id", actionPenerima.NewDeletePenerima().DeletePenerimaHandler)
 	api.POST("/penerima", actionPenerima.NewCreatePenerima().CreatePenerimaHandler)
 	api.PUT("/penerima", actionPenerima.NewUpdatePenerima().UpdatePenerimaHandler)
-
-	// endpoint surat
-	api.GET("/surat", actionSurat.NewListSurat().ListSuratHandler)
-	api.GET("/surat/:id", actionSurat.NewReadSurat().ReadSuratHandler)
-	api.DELETE("/surat/:id", actionSurat.NewDeleteSurat().DeleteSuratHandler)
-	api.PUT("/surat", actionSurat.NewUpdateSurat().UpdateSuratHandler)
-	api.POST("/surat", actionSurat.NewCreateSurat().CreateSuratHandler)
 
 	// endpoint surat masuk
 	api.GET("/surat_masuk/user/:id", actionSuratMasuk.NewListSuratMasuk().ListPenerimaSuratMasukHandler)
