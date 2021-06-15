@@ -502,7 +502,7 @@ func (r *repo) createSurat(arg *CreateSuratKeluarParams) (*models.SuratKeluar, e
 
 	if uploadPayload != "" {
 
-		err = rd.RdSet(arg.SuratKeluar.Perihal, string(uploadPayload), 0)
+		err = rd.RdSet(arg.SuratKeluar.Nomor, string(uploadPayload), 0)
 		if err != nil {
 			return nil, err
 		}
