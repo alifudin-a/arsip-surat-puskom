@@ -382,18 +382,12 @@ func (*repo) updateSurat(arg *UpdateSuratKeluarParams) (*models.SuratKeluar, err
 		}
 	}
 
+	var sql string
+	var values []interface{}
+	sql, values = helper.QueryBuilderUpdate("tbl_surat", arg.SuratKeluar)
+
 	tx := db.MustBegin()
-	err = tx.QueryRowx(query.UpdateSuratKeluar,
-		arg.SuratKeluar.Tanggal,
-		arg.SuratKeluar.Nomor,
-		arg.SuratKeluar.IDPengirim,
-		arg.SuratKeluar.Perihal,
-		arg.SuratKeluar.IDJenis,
-		arg.SuratKeluar.Keterangan,
-		arg.SuratKeluar.UpdatedAt,
-		arg.SuratKeluar.Upload,
-		arg.SuratKeluar.ID,
-	).StructScan(&surat)
+	err = tx.QueryRowx(sql, values...).StructScan(&surat)
 	if err != nil {
 		tx.Rollback()
 		return nil, err
